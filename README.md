@@ -1,10 +1,22 @@
 # 序言
-这里将会用 [golang](https://golang.org/) 中的 [gin](https://www.yoytang.com/go-gin-doc.html) 框架 吐出漫画模块相关数据  
+本次主要使用 `golang` 重写 `email` 模块  
 
-[点此查看接口文档](http://api_puppeteer.doc.hlzblog.top/)  
+#### 要求清单
+
+* 接收发邮件的HTTP请求
+    - 异步队列
+        - [x] RabbitMQ
+        - [ ] Kafka
+        - [ ] Redis
+* 邮件发送服务
+    - 考虑邮件发送通道数、频率的限制
+        - 并发任务管理
+            - 协程数量管控
 
 ## 基于框架
-该框架使用请看这里 [go-gin-example](https://email_server/blob/master/README_ZH.md)   
+
+该框架使用请看这里 [go-gin-example](https://email_server/blob/master/README_ZH.md)  
+目前已改造部分功能,具体请追溯云天河的代码  
 
 消息队列采用驱动模式  
 已完成驱动 `rabbitMQ`  
