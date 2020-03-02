@@ -19,15 +19,6 @@
 该框架使用请看这里 [go-gin-example](https://email_server/blob/master/README_ZH.md)  
 目前已改造部分功能,具体请追溯云天河的代码  
 
-消息队列采用驱动模式  
-已完成驱动 `rabbitMQ`  
-
-###### 目前包管理已调为 `gomod`  
-
-~~~bash
-cp conf/app.ini.example conf/app.ini  
-~~~
-
 ## 工具
 
 [json转go结构体](https://www.sojson.com/json/json2go.html)  
