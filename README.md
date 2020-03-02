@@ -110,11 +110,25 @@ make build
     - `receiver` string 接收者邮箱.多个以逗号隔开
     - `receiver_name` string 接收者邮箱昵称,可以不填,多个以逗号隔开
 
+###### 示例:正常请求
+
 ~~~bash
 {
     "code": 200,
     "message": "success",
     "data": null
+}
+~~~
+
+###### 示例:异常请求
+
+~~~bash
+{
+    "code": 1001,
+    "message": "请求参数错误",
+    "data": [
+        "receiver 含格式不正确的邮箱地址"
+    ]
 }
 ~~~
 
