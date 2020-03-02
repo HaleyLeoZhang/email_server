@@ -34,7 +34,6 @@ type Database struct {
 	Password    string
 	Host        string
 	Name        string
-	TablePrefix string
 }
 
 var DatabaseSetting = &Database{}

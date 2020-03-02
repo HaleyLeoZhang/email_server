@@ -16,10 +16,9 @@ WriteTimeout=60
 [smtp]
 # - 必填
 MAIL_HOST=smtp.qq.com
-MAIL_FROM_ADDRESS=hlzblog@vip.qq.com
-MAIL_USERNAME=QQ邮箱-----------------需要改---------------
+MAIL_FROM_ADDRESS=QQ邮箱-------------需要改---------------
+MAIL_USERNAME=QQ账号-----------------需要改---------------
 MAIL_PASSWORD=POP3密码---------------需要改---------------
-# - 
 MAIL_PORT=587
 MAIL_ENCRYPTION_IS_TLS=true
 
@@ -29,7 +28,6 @@ User=root
 Password=602466
 Host=127.0.0.1:3306
 Name=common_service
-TablePrefix=
 
 [redis]
 Host=127.0.0.1:6379
