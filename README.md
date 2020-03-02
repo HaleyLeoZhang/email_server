@@ -80,7 +80,11 @@ make build
 - API `127.0.0.1:8100/api/email/send`  
 - 方式 `POST`
 - 入参
-    - `title` 长度 1到
+    - `title` 邮件名
+    - `content` 待发送正文,支持html
+    - `sender_name` string 发件人昵称
+    - `receiver` string 接收者邮箱.多个以逗号隔开
+    - `receiver_name` string 接收者邮箱昵称,可以不填,多个以逗号隔开
 
 
 ~~~bash

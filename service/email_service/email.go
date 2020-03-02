@@ -87,7 +87,7 @@ func doPull(payload string) error {
 		// fmt.Printf("消费失败,格式不正确,丢弃当前消息: %v\n", payload)
 		return nil
 	}
-	fmt.Printf("正在发送邮件: %v \n", payload)
+	// fmt.Printf("正在发送邮件: %v \n", payload)
 	err = smtp.Send()
 
 	email := new(models.Email)
@@ -101,7 +101,7 @@ func doPull(payload string) error {
 	if err != nil {
 		email.IsOk = isOkNo
 		_ = email.Create()
-		fmt.Printf("发送失败: %v \n", payload)
+		// fmt.Printf("发送失败: %v \n", payload)
 		return err
 	}
 
@@ -111,7 +111,7 @@ func doPull(payload string) error {
 		return err
 	}
 
-	fmt.Printf("发送邮件成功: %v \n", payload)
+	// fmt.Printf("发送邮件成功: %v \n", payload)
 
 	return nil
 }
