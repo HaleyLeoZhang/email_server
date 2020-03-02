@@ -86,19 +86,16 @@ make build
     - `receiver` string 接收者邮箱.多个以逗号隔开
     - `receiver_name` string 接收者邮箱昵称,可以不填,多个以逗号隔开
 
-> TODO
-
-支持多附件上传  
-
 ~~~bash
 POST `127.0.0.1:8100/api/email/send`  
 
-HTTP/1.1 200 OK
 {
     "code": 200,
-    "message": "",
-    "data":
-    {
-        "quert_string": "token_name=End-Token&token_value=9abc3156eb404f72b8a7d9286d01307b&expire_at=1542867765" // 身份令牌信息
-    }
+    "message": "success",
+    "data": null
 }
+~~~
+
+> TODO
+
+支持多附件上传  
