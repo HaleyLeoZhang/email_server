@@ -66,7 +66,6 @@ type AMQP struct {
 	PASSWORD             string
 	VHOST                string
 	CHANNEL_NUMBER       int
-	CHANNEL_SLEEP_SECOND int
 }
 
 var AMQPSetting = &AMQP{}
