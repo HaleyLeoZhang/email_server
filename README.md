@@ -86,6 +86,9 @@ make build
     - `receiver` string 接收者邮箱.多个以逗号隔开
     - `receiver_name` string 接收者邮箱昵称,可以不填,多个以逗号隔开
 
+> TODO
+
+支持多附件上传  
 
 ~~~bash
 POST `127.0.0.1:8100/api/email/send`  
