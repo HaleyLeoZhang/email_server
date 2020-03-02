@@ -20,7 +20,6 @@ MAIL_FROM_ADDRESS=hlzblog@vip.qq.com
 MAIL_USERNAME=QQ邮箱-----------------需要改---------------
 MAIL_PASSWORD=POP3密码---------------需要改---------------
 # - 
-MAIL_HOSTNAME=www.hlzblog.top
 MAIL_PORT=587
 MAIL_ENCRYPTION_IS_TLS=true
 

@@ -10,7 +10,7 @@ package email_service
 import (
 	"email_server/models"
 	"email_server/pkg/queue"
-    "email_server/pkg/util"
+	"email_server/pkg/util"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -120,11 +120,11 @@ func (e *Email) getReceiverAndName(receiver string, receiver_name string) ([]str
 
 	receiver_arr := strings.Split(receiver, delimiter)
 
-    for _, email := range receiver_arr {
-        if false == util.RegEmail(email) {
-            return nil, nil, errors.New("receiver 含格式不正确的邮箱地址") 
-        }
-    }
+	for _, email := range receiver_arr {
+		if false == util.RegEmail(email) {
+			return nil, nil, errors.New("receiver 含格式不正确的邮箱地址")
+		}
+	}
 
 	var receiver_name_arr []string
 	if "" == receiver_name {

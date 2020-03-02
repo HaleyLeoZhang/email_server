@@ -9,7 +9,6 @@ import (
 )
 
 type App struct {
-
 	RuntimeRootPath string
 
 	LogSavePath string
@@ -55,7 +54,6 @@ type Smtp struct {
 	MAIL_FROM_ADDRESS      string
 	MAIL_USERNAME          string
 	MAIL_PASSWORD          string
-	MAIL_HOSTNAME          string
 	MAIL_PORT              int
 	MAIL_ENCRYPTION_IS_TLS bool
 }

@@ -1,12 +1,11 @@
-
 package util
 
 import (
-    "regexp"
+	"regexp"
 )
 
 func RegEmail(email string) bool {
-    pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*`
-    reg := regexp.MustCompile(pattern)
-    return reg.MatchString(email)
+	pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*`
+	reg := regexp.MustCompile(pattern)
+	return reg.MatchString(email)
 }
