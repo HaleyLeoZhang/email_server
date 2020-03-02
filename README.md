@@ -35,8 +35,8 @@ make ini
 ~~~
 
 
-rabbitMQ 请配置 `exchange 名为 `email_sender` 
-rabbitMQ 请配置 `queue 名为 `email_sender` 
+rabbitMQ 请配置 `exchange` 名为 `email_sender`  
+rabbitMQ 请配置 `queue` 名为 `email_sender`  
 
 数据库、表设置  
 ~~~sql
