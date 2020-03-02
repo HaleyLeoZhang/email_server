@@ -10,6 +10,9 @@ build:
 	@cp conf/app.ini /usr/local/etc/mail.ops.hlzblog.top.ini
 	@echo "Copy ---DONE"
 
+ini:
+	@cp conf/app.ini /usr/local/etc/mail.ops.hlzblog.top.ini
+
 tool:
 	go vet ./...; true
 	gofmt -w .
@@ -21,12 +24,16 @@ clean:
 	rm -rf email_server
 	go clean -i .
 	@rm -rf service/email_service/data
+	@rm -rf pkg/queue/data
 
 test:
 	@echo "Test --- START"
-	@go test -v service/email_service/*.go
+	# @go test -v service/email_service/*.go
+	@go test -v pkg/queue/*.go
 	@rm -rf service/email_service/data
+	@rm -rf pkg/queue/data
 	@echo "Test --- END"
+
 
 help:
 	@echo "make: compile packages and dependencies"

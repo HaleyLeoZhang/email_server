@@ -74,6 +74,18 @@ type Smtp struct {
 
 var SmtpSetting = &Smtp{}
 
+type AMQP struct {
+	HOST                 string
+	PORT                 int
+	USER                 string
+	PASSWORD             string
+	VHOST                string
+	CHANNEL_NUMBER       int
+	CHANNEL_SLEEP_SECOND int
+}
+
+var AMQPSetting = &AMQP{}
+
 var cfg *ini.File
 
 // Setup initialize the configuration instance
@@ -101,6 +113,7 @@ func Setup() {
 	mapTo("database", DatabaseSetting)
 	mapTo("redis", RedisSetting)
 	mapTo("smtp", SmtpSetting)
+	mapTo("amqp", AMQPSetting)
 
 	AppSetting.ImageMaxSize = AppSetting.ImageMaxSize * 1024 * 1024
 	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second

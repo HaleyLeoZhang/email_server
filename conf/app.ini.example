@@ -52,3 +52,12 @@ Password = zhangli
 MaxIdle = 30
 MaxActive = 30
 IdleTimeout = 200
+
+[amqp]
+HOST=127.0.0.1
+PORT=5672
+USER=guest
+PASSWORD=guest
+VHOST=/
+CHANNEL_NUMBER=4
+CHANNEL_SLEEP_SECOND=30
