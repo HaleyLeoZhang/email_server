@@ -63,7 +63,6 @@ var RedisSetting = &Redis{}
 
 type Smtp struct {
 	MAIL_HOST              string
-	MAIL_FORM_NAME         string
 	MAIL_FROM_ADDRESS      string
 	MAIL_USERNAME          string
 	MAIL_PASSWORD          string
@@ -85,6 +84,12 @@ type AMQP struct {
 }
 
 var AMQPSetting = &AMQP{}
+
+type Queue struct {
+	DRIVER string
+}
+
+var QueueSetting = &Queue{}
 
 var cfg *ini.File
 
@@ -114,6 +119,7 @@ func Setup() {
 	mapTo("redis", RedisSetting)
 	mapTo("smtp", SmtpSetting)
 	mapTo("amqp", AMQPSetting)
+	mapTo("queue", QueueSetting)
 
 	AppSetting.ImageMaxSize = AppSetting.ImageMaxSize * 1024 * 1024
 	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second

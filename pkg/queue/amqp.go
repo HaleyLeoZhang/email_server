@@ -57,7 +57,6 @@ func (a *AMQP) Push() error {
 		return err
 	}
 
-	fmt.Printf("Message: %v \n", a.Payload)
 	conn.Close()
 	return nil
 }
@@ -93,18 +92,19 @@ func (a *AMQP) Pull(callback func(string) error) error {
 		select {
 		case d := <-delivery:
 			pool <- 1
-			go a.handle(d, callback)
+			go a.handle(d, callback, pool)
 		}
 	}
 	return nil
 }
 
-func (a *AMQP) handle(d amqp.Delivery, callback func(string) error) error {
+func (a *AMQP) handle(d amqp.Delivery, callback func(string) error, pool <-chan int) error {
 
 	err := callback(string(d.Body))
 	if err != nil {
 		return err
 	}
 	d.Ack(false)
+	<-pool
 	return nil
 }

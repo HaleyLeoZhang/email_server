@@ -64,7 +64,6 @@ func Send(c *gin.Context) {
 	valid.MaxSize(data["sender_name"], 50, "sender_name")
 	valid.MinSize(data["receiver"], 1, "receiver")
 	valid.MaxSize(data["receiver"], 2000, "receiver")
-	valid.MinSize(data["receiver_name"], 1, "receiver_name")
 	valid.MaxSize(data["receiver_name"], 1000, "receiver_name")
 
 	if valid.HasErrors() {
@@ -74,10 +73,11 @@ func Send(c *gin.Context) {
 	}
 
 	service := email_service.Email{}
-	err := service.DoCreate(data)
+	err := service.DoPush(data)
 
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.SOURCE_NOT_FOUND, nil)
+		err_info := []string{err.Error()}
+		appG.Response(http.StatusInternalServerError, e.INVALID_PARAMS, err_info)
 		return
 	}
 

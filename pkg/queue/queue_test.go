@@ -5,7 +5,6 @@ import (
 	"email_server/pkg/gredis"
 	"email_server/pkg/logging"
 	"email_server/pkg/setting"
-	"fmt"
 	"testing"
 )
 
@@ -29,18 +28,18 @@ func Test_AMQP_PUSH(t *testing.T) {
 	}
 }
 
-func Test_AMQP_Pull(t *testing.T) {
-	queue := &AMQP{
-		Exchange: "email_sender",
-		Queue:    "email_sender",
-	}
-	err := queue.Pull(callPull)
-	if err != nil {
-		t.Fatalf("测试失败: %s \n", err)
-	}
-}
+// func Test_AMQP_Pull(t *testing.T) {
+// 	queue := &AMQP{
+// 		Exchange: "email_sender",
+// 		Queue:    "email_sender",
+// 	}
+// 	err := queue.Pull(callPull)
+// 	if err != nil {
+// 		t.Fatalf("测试失败: %s \n", err)
+// 	}
+// }
 
-func callPull(data string) error {
-	fmt.Printf("消费数据 %s \n", data)
-	return nil
-}
+// func callPull(data string) error {
+// 	fmt.Printf("消费数据 %s \n", data)
+// 	return nil
+// }

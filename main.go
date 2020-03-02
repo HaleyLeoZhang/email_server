@@ -13,6 +13,7 @@ import (
 	"email_server/pkg/setting"
 	// "email_server/pkg/util"
 	"email_server/routers"
+	"email_server/service/bootstrap"
 )
 
 func init() {
@@ -20,6 +21,7 @@ func init() {
 	models.Setup()
 	logging.Setup()
 	gredis.Setup()
+	bootstrap.Setup() // 邮件队列
 }
 
 // @title Golang Gin API

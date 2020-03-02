@@ -16,21 +16,31 @@ import (
 )
 
 type Smtp struct {
-	Subject      string
-	Body         string
-	Receiver     []string
-	ReceiverName []string
+	Subject      string   `json:"subject"`
+	SenderName   string   `json:"sender_name"`
+	Body         string   `json:"body"`
+	Receiver     []string `json:"receiver"`
+	ReceiverName []string `json:"receiver_name"`
 }
 
 func (s *Smtp) Send() error {
 
 	// 内容配置
 	m := gomail.NewMessage()
-	m.SetAddressHeader("From", setting.SmtpSetting.MAIL_FROM_ADDRESS, setting.SmtpSetting.MAIL_FORM_NAME)
+	m.SetAddressHeader("From", setting.SmtpSetting.MAIL_FROM_ADDRESS, s.SenderName)
+
+	no_receiver := false
+	if len(s.ReceiverName) == 0 {
+		no_receiver = true
+	}
 
 	format_emails := []string{}
 	for key, _ := range s.Receiver {
-		format_emails = append(format_emails, m.FormatAddress(s.Receiver[key], s.ReceiverName[key]))
+		if no_receiver {
+			format_emails = append(format_emails, m.FormatAddress(s.Receiver[key], ""))
+		} else {
+			format_emails = append(format_emails, m.FormatAddress(s.Receiver[key], s.ReceiverName[key]))
+		}
 	}
 	m.SetHeader("To", format_emails...)
 	m.SetHeader("Subject", s.Subject)

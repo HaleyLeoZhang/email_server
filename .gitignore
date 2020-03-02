@@ -5,4 +5,4 @@ runtime/*
 !runtime/qrcode/bg.jpg
 !runtime/fonts
 
-puppeteer.hlzblog.top
+email_server

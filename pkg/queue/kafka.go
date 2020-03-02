@@ -19,7 +19,7 @@ func (q *Kafka) Push() error {
 	return nil
 }
 
-func (q *Kafka) Pull() error {
+func (q *Kafka) Pull(callback func(string) error) error {
 	// q.Payload
 	return nil
 }

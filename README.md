@@ -7,7 +7,7 @@
 该框架使用请看这里 [go-gin-example](https://email_server/blob/master/README_ZH.md)   
 
 消息队列采用驱动模式  
-目前融入 `kafka` 与 `rabbitMQ`  
+已完成驱动 `rabbitMQ`  
 
 ###### 目前包管理已调为 `gomod`  
 
@@ -21,44 +21,41 @@ cp conf/app.ini.example conf/app.ini
 请注意json中的数据类型  
 
 ## 常用功能
+集成命令都已集成到 `Makefile`
 
 > 生成应用
-
-~~~bash
-go build -o 应用的英文名 main.go
-~~~
-
-或者  
 
 ~~~bash
 make build
 ~~~
 
-运行应用  
+> 生成配置文件
 
 ~~~bash
-刚刚生成的应用地址 配置文件在系统中的绝对路径
+cp conf/app.ini.example conf/app.ini  
 ~~~
 
-> 格式化代码
+设置好配置文件后,生成配置文件到默认目录下
+
+~~~bash
+make ini
+~~~
+
+> 更多
+
+###### 格式化代码
 
 ~~~bash
 make tool
 ~~~
 
-##### 示例运行
+###### 单元测试
 
 ~~~bash
-project_path="/data/www/site/mail.ops.hlzblog.top"
-app_name="mail.ops.hlzblog.top"
-
-cd ${project_path}
-rm -rf ${app_name} 
-go build -o ${app_name} -v .
-./${app_name} ${project_path}/conf/app.ini 
+make test
 ~~~
 
-> 单元测试
+关于单元测试的书写  
 
 ~~~bash
 文件必须以 ...test.go 结尾
@@ -68,3 +65,33 @@ go build -o ${app_name} -v .
 TestMain 每个包只有一个，参数为 *testing.M
 t.Error 为打印错误信息,并当前test case会被跳过
 ~~~
+
+##### 示例运行
+
+~~~bash
+make build
+./email_server
+~~~
+
+## 使用
+
+#### 发送邮件
+
+- API `127.0.0.1:8100/api/email/send`  
+- 方式 `POST`
+- 入参
+    - `title` 长度 1到
+
+
+~~~bash
+POST `127.0.0.1:8100/api/email/send`  
+
+HTTP/1.1 200 OK
+{
+    "code": 200,
+    "message": "",
+    "data":
+    {
+        "quert_string": "token_name=End-Token&token_value=9abc3156eb404f72b8a7d9286d01307b&expire_at=1542867765" // 身份令牌信息
+    }
+}

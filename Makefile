@@ -28,7 +28,7 @@ clean:
 
 test:
 	@echo "Test --- START"
-	# @go test -v service/email_service/*.go
+	@go test -v service/email_service/*.go
 	@go test -v pkg/queue/*.go
 	@rm -rf service/email_service/data
 	@rm -rf pkg/queue/data
