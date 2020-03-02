@@ -111,7 +111,6 @@ make build
     - `receiver_name` string 接收者邮箱昵称,可以不填,多个以逗号隔开
 
 ~~~bash
-HTTP/1.1 POST `127.0.0.1:8100/api/email/send`  
 {
     "code": 200,
     "message": "success",
