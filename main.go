@@ -11,7 +11,6 @@ import (
 	"email_server/pkg/gredis"
 	"email_server/pkg/logging"
 	"email_server/pkg/setting"
-	// "email_server/pkg/util"
 	"email_server/routers"
 	"email_server/service/bootstrap"
 )

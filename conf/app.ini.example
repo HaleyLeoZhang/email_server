@@ -1,18 +1,5 @@
 [app]
-PageSize=20
-JwtSecret=233
-PrefixUrl=http://0.0.0.0:8100
-
-RuntimeRootPath=/data/logs/app/email_server/runtime/
-
-ImageSavePath=upload/images/
-# MB
-ImageMaxSize=5
-ImageAllowExts=.jpg,.jpeg,.png
-
-ExportSavePath=export/
-QrCodeSavePath=qrcode/
-FontSavePath=fonts/
+RuntimeRootPath=/tmp/email_server/runtime/
 
 LogSavePath=logs/
 LogSaveName=api

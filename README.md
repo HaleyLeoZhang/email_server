@@ -22,12 +22,6 @@
 ## 常用功能
 集成命令都已集成到 `Makefile`
 
-> 生成应用
-
-~~~bash
-make build
-~~~
-
 > 生成配置文件
 
 ~~~bash
@@ -39,6 +33,7 @@ cp conf/app.ini.example conf/app.ini
 ~~~bash
 make ini
 ~~~
+
 
 rabbitMQ 请配置 `exchange 名为 `email_sender` 
 rabbitMQ 请配置 `queue 名为 `email_sender` 

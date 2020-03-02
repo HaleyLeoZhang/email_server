@@ -16,11 +16,7 @@ import (
 
 	"email_server/pkg/app"
 	"email_server/pkg/e"
-	// "email_server/pkg/setting"
-	// "email_server/pkg/util"
 	"email_server/service/email_service"
-	// "email_server/pkg/logging"
-	// "fmt"
 )
 
 /**
@@ -28,12 +24,29 @@ import (
  * @apiName send
  * @apiGroup Email
  *
- * @apiParam {int} page 页码
+ * @apiParam {string} title 邮件标题
+ * @apiParam {string} content 邮件内容
+ * @apiParam {string} sender_name 发件人昵称
+ * @apiParam {string} receiver 收件人邮箱,多个以英文逗号隔开
+ * @apiParam {string} receiver_name 收件人昵称,可不填,多个以英文逗号隔开
  *
  * @apiDescription  发送邮件
  *
  * @apiVersion 1.0.0
  * @apiSuccessExample Success-Response:
+ * {
+ *     "code": 200,
+ *     "message": "success",
+ *     "data": null
+ * }
+ * @apiErrorExample Error-Response:
+ * {
+ *     "code": 1001,
+ *     "message": "请求参数错误",
+ *     "data": [
+ *         "receiver 含格式不正确的邮箱地址"
+ *     ]
+ * }
  */
 func Send(c *gin.Context) {
 	appG := app.Gin{C: c}

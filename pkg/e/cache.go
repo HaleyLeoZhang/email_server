@@ -1,9 +1,0 @@
-package e
-
-const (
-	DELEMITER_CACHE = ":"
-
-	CACHE_ARTICLE         = "ARTICLE"
-	CACHE_COMIC_PAGE_LIST = "COMIC_PAGE_LIST"
-	CACHE_COMIC_INFO      = "COMIC_INFO"
-)
