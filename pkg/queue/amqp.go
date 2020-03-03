@@ -14,28 +14,48 @@ import (
 	"fmt"
 	"github.com/streadway/amqp"
 	// "time"
+	"sync"
 )
 
 type AMQP struct {
 	// 公共
-	Payload string
+	Payload []byte
 	// 当前驱动配置项
 	Exchange string
 	Queue    string
 }
 
-func (a *AMQP) newConnect() (*amqp.Connection, error) {
-	dial := fmt.Sprintf("amqp://%v:%v@%v:%v/", setting.AMQPSetting.USER, setting.AMQPSetting.PASSWORD, setting.AMQPSetting.HOST, setting.AMQPSetting.PORT)
-	return amqp.Dial(dial)
+/**
+ * 单例模式
+ */
+type oneAMQP struct {
+	Conn *amqp.Connection
+	// 因为多协程共用一个tcp链接,防止并发交错错写入
+	// 但一个链接能建立多个通道
+	Lock sync.Mutex
+}
+
+var one oneAMQP
+
+func (a *AMQP) newConnect() *amqp.Connection {
+	if nil == one.Conn {
+		dial := fmt.Sprintf("amqp://%v:%v@%v:%v/", setting.AMQPSetting.USER, setting.AMQPSetting.PASSWORD, setting.AMQPSetting.HOST, setting.AMQPSetting.PORT)
+		var err error
+		one.Conn, err = amqp.Dial(dial)
+		if err != nil {
+			panic([]string{err.Error()})
+		}
+	}
+	return one.Conn
+}
+
+func (a *AMQP) SetPayload(payload []byte) {
+	a.Payload = payload
 }
 
 func (a *AMQP) Push() error {
 
-	conn, err := a.newConnect()
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
+	conn := a.newConnect()
 
 	ch, err := conn.Channel()
 	if err != nil {
@@ -43,6 +63,7 @@ func (a *AMQP) Push() error {
 	}
 	defer ch.Close()
 
+	one.Lock.Lock()
 	err = ch.Publish(
 		a.Exchange, // exchange
 		a.Queue,    // routing key
@@ -50,14 +71,13 @@ func (a *AMQP) Push() error {
 		false,      // immediate
 		amqp.Publishing{
 			ContentType: "text/plain",
-			Body:        []byte(a.Payload),
+			Body:        a.Payload,
 		})
-
+	one.Lock.Unlock()
 	if err != nil {
 		return err
 	}
 
-	conn.Close()
 	return nil
 }
 
@@ -66,11 +86,7 @@ func (a *AMQP) Pull(callback func(string) error) error {
 	pool := make(chan int, setting.AMQPSetting.CHANNEL_NUMBER)
 	defer close(pool)
 
-	conn, err := a.newConnect()
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
+	conn := a.newConnect()
 
 	ch, err := conn.Channel()
 	if err != nil {
@@ -78,6 +94,7 @@ func (a *AMQP) Pull(callback func(string) error) error {
 	}
 	defer ch.Close()
 
+	one.Lock.Lock()
 	delivery, err := ch.Consume(
 		a.Queue, // name
 		"",      // consumerTag,
@@ -87,6 +104,7 @@ func (a *AMQP) Pull(callback func(string) error) error {
 		false,   // noWait
 		nil,     // arguments
 	)
+	one.Lock.Unlock()
 
 	for {
 		select {

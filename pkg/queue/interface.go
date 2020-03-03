@@ -9,16 +9,28 @@ package queue
 
 import (
 	"email_server/pkg/e"
+	"email_server/pkg/setting"
 )
 
 type Queue interface {
 	Push() error
 	Pull(callback func(string) error) error
+	SetPayload([]byte)
 }
 
-func GetEmailQueue() *AMQP {
-	return &AMQP{
-		Exchange: e.AMQP_MAIL_EXCHANGE,
-		Queue:    e.AMQP_MAIL_QUEUE,
+/**
+ * 简单工厂
+ *
+ * @return queue.Queue
+ */
+func GetEmailQueue() Queue {
+	switch setting.QueueSetting.DRIVER {
+	case "amqp":
+		return &AMQP{
+			Exchange: e.AMQP_MAIL_EXCHANGE,
+			Queue:    e.AMQP_MAIL_QUEUE,
+		}
+	default:
+		panic("驱动配置错误")
 	}
 }

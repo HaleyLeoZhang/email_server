@@ -29,11 +29,11 @@ type Server struct {
 var ServerSetting = &Server{}
 
 type Database struct {
-	Type        string
-	User        string
-	Password    string
-	Host        string
-	Name        string
+	Type     string
+	User     string
+	Password string
+	Host     string
+	Name     string
 }
 
 var DatabaseSetting = &Database{}
@@ -60,12 +60,12 @@ type Smtp struct {
 var SmtpSetting = &Smtp{}
 
 type AMQP struct {
-	HOST                 string
-	PORT                 int
-	USER                 string
-	PASSWORD             string
-	VHOST                string
-	CHANNEL_NUMBER       int
+	HOST           string
+	PORT           int
+	USER           string
+	PASSWORD       string
+	VHOST          string
+	CHANNEL_NUMBER int
 }
 
 var AMQPSetting = &AMQP{}

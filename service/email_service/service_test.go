@@ -20,12 +20,12 @@ func Test_DoPush(t *testing.T) {
 	service := &Email{}
 
 	data := make(map[string]interface{})
+
 	data["title"] = "测试"
 	data["content"] = "文本"
 	data["sender_name"] = "云天河测试"
 	data["receiver"] = "229270575@qq.com,haleyleozhang@sohu.com"
 	data["receiver_name"] = "沐临风,报警机器人"
-	data["attachment"] = ""
 
 	err := service.DoPush(data)
 	if err != nil {

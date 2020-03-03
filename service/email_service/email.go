@@ -61,7 +61,7 @@ func (e *Email) DoPush(data map[string]interface{}) error {
 	}
 
 	q := queue.GetEmailQueue()
-	q.Payload = string(payload)
+	q.SetPayload(payload)
 	err = q.Push()
 	if err != nil {
 		return err

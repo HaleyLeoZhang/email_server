@@ -10,8 +10,12 @@ package queue
 // ----------------------------------------------------------------------
 
 type Kafka struct {
-	Payload  string
+	Payload  []byte
 	Callback func(string)
+}
+
+func (q *Kafka) SetPayload(payload []byte) {
+	q.Payload = payload
 }
 
 func (q *Kafka) Push() error {

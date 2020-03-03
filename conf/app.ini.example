@@ -36,6 +36,10 @@ MaxIdle=30
 MaxActive=30
 IdleTimeout=200
 
+[queue]
+; 队列驱动枚举 amqp 、kafka
+DRIVER=amqp
+
 [amqp]
 HOST=127.0.0.1
 PORT=5672
