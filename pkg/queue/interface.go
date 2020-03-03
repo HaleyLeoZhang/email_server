@@ -29,7 +29,7 @@ var pool chan int
  * @return queue.Queue
  */
 func GetEmailQueue() Queue {
-    pool = make(chan int, setting.QueueSetting.CHANNEL_NUMBER)
+	pool = make(chan int, setting.QueueSetting.CHANNEL_NUMBER)
 	switch setting.QueueSetting.DRIVER {
 	case "amqp":
 		return &AMQP{

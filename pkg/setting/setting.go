@@ -60,18 +60,18 @@ type Smtp struct {
 var SmtpSetting = &Smtp{}
 
 type AMQP struct {
-	HOST           string
-	PORT           int
-	USER           string
-	PASSWORD       string
-	VHOST          string
+	HOST     string
+	PORT     int
+	USER     string
+	PASSWORD string
+	VHOST    string
 }
 
 var AMQPSetting = &AMQP{}
 
 type Queue struct {
-	DRIVER string
-    CHANNEL_NUMBER int
+	DRIVER         string
+	CHANNEL_NUMBER int
 }
 
 var QueueSetting = &Queue{}
