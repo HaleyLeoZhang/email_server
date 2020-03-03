@@ -39,6 +39,8 @@ IdleTimeout=200
 [queue]
 ; 队列驱动枚举 amqp 、kafka
 DRIVER=amqp
+; 并发消费goroutine数量
+CHANNEL_NUMBER=4
 
 [amqp]
 HOST=127.0.0.1
@@ -46,4 +48,3 @@ PORT=5672
 USER=用户名-------------------------需要改---------------
 PASSWORD=密码-----------------------需要改---------------
 VHOST=/
-CHANNEL_NUMBER=4

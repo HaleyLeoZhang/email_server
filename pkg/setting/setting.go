@@ -65,13 +65,13 @@ type AMQP struct {
 	USER           string
 	PASSWORD       string
 	VHOST          string
-	CHANNEL_NUMBER int
 }
 
 var AMQPSetting = &AMQP{}
 
 type Queue struct {
 	DRIVER string
+    CHANNEL_NUMBER int
 }
 
 var QueueSetting = &Queue{}

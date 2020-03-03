@@ -19,11 +19,17 @@ type Queue interface {
 }
 
 /**
+ * 最大消费数量
+ */
+var pool chan int
+
+/**
  * 简单工厂
  *
  * @return queue.Queue
  */
 func GetEmailQueue() Queue {
+    pool = make(chan int, setting.QueueSetting.CHANNEL_NUMBER)
 	switch setting.QueueSetting.DRIVER {
 	case "amqp":
 		return &AMQP{

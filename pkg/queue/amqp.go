@@ -82,9 +82,6 @@ func (a *AMQP) Push() error {
 }
 
 func (a *AMQP) Pull(callback func(string) error) error {
-	// 最大协程数量
-	pool := make(chan int, setting.AMQPSetting.CHANNEL_NUMBER)
-	defer close(pool)
 
 	conn := a.newConnect()
 
@@ -110,13 +107,13 @@ func (a *AMQP) Pull(callback func(string) error) error {
 		select {
 		case d := <-delivery:
 			pool <- 1
-			go a.handle(d, callback, pool)
+			go a.handle(d, callback)
 		}
 	}
 	return nil
 }
 
-func (a *AMQP) handle(d amqp.Delivery, callback func(string) error, pool <-chan int) error {
+func (a *AMQP) handle(d amqp.Delivery, callback func(string) error) error {
 
 	err := callback(string(d.Body))
 	if err != nil {
