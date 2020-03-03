@@ -45,6 +45,8 @@ func (s *Smtp) Send() error {
 	m.SetHeader("To", format_emails...)
 	m.SetHeader("Subject", s.Subject)
 	m.SetBody("text/html", s.Body)
+    
+    // m.Attach("/tmp/0000146.jpg", gomail.Rename("picture.jpg"))
 
 	// 基础配置
 	d := gomail.NewDialer(
