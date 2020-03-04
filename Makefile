@@ -29,6 +29,7 @@ test:
 	@go test -v service/email_service/*.go
 	@go test -v pkg/queue/*.go
 	@go test -v pkg/util/*.go
+	@go test -v pkg/file/*.go
 	@echo "Test --- END"
 
 

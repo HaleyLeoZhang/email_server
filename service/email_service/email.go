@@ -9,6 +9,7 @@ package email_service
 
 import (
 	"email_server/models"
+	"email_server/pkg/e"
 	"email_server/pkg/queue"
 	"email_server/pkg/util"
 	"encoding/json"
@@ -54,6 +55,7 @@ func (e *Email) DoPush(data map[string]interface{}) error {
 	smtp.SenderName = data["sender_name"].(string)
 	smtp.Receiver = receiver
 	smtp.ReceiverName = receiver_name
+	smtp.Attachment = data["attachment"].([]string)
 
 	payload, err := json.Marshal(smtp)
 	if err != nil {
@@ -84,10 +86,8 @@ func doPull(payload string) error {
 
 	err := json.Unmarshal([]byte(payload), smtp)
 	if err != nil {
-		// fmt.Printf("消费失败,格式不正确,丢弃当前消息: %v\n", payload)
 		return nil
 	}
-	// fmt.Printf("正在发送邮件: %v \n", payload)
 	err = smtp.Send()
 
 	email := new(models.Email)
@@ -96,14 +96,17 @@ func doPull(payload string) error {
 	email.SenderName = smtp.SenderName
 	email.Receiver = strings.Join(smtp.Receiver, ",")
 	email.ReceiverName = strings.Join(smtp.ReceiverName, ",")
-	// email.Attachment = data["attachment"]
+	email.Attachment = strings.Join(smtp.Attachment, e.UPLOAD_MULIT_FILE)
+	email.Remark = strings.Join(smtp.Remark, ",")
 
 	if err != nil {
 		email.IsOk = isOkNo
 		_ = email.Create()
-		// fmt.Printf("发送失败: %v \n", payload)
 		return err
 	}
+
+	// 删除用过的文件
+	smtp.DeleteAttachmentList()
 
 	email.IsOk = isOkYes
 	err = email.Create()

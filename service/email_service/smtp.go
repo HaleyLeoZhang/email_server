@@ -11,8 +11,11 @@ package email_service
 
 import (
 	"crypto/tls"
+	"email_server/pkg/e"
+	"email_server/pkg/file"
 	"email_server/pkg/setting"
 	"gopkg.in/gomail.v2"
+	"strings"
 )
 
 type Smtp struct {
@@ -21,6 +24,8 @@ type Smtp struct {
 	Body         string   `json:"body"`
 	Receiver     []string `json:"receiver"`
 	ReceiverName []string `json:"receiver_name"`
+	Attachment   []string `json:"attachment"`
+	Remark       []string `json:"remark"`
 }
 
 func (s *Smtp) Send() error {
@@ -46,7 +51,15 @@ func (s *Smtp) Send() error {
 	m.SetHeader("Subject", s.Subject)
 	m.SetBody("text/html", s.Body)
 
-	// m.Attach("/tmp/0000146.jpg", gomail.Rename("picture.jpg"))
+	upload := &Upload{}
+	fileList := s.GetAttachmentList()
+	for filePath, fileAlias := range fileList {
+		if e.UPLOAD_FILE_EXISTS == upload.CheckFile(filePath) {
+			m.Attach(filePath, gomail.Rename(fileAlias))
+		} else {
+			s.Remark = append(s.Remark, "Not Found: "+fileAlias)
+		}
+	}
 
 	// 基础配置
 	d := gomail.NewDialer(
@@ -65,4 +78,29 @@ func (s *Smtp) Send() error {
 
 	return nil
 
+}
+
+func (s *Smtp) GetAttachmentList() map[string]string {
+	list := make(map[string]string) // file_name file_alias
+	upload := &Upload{}
+
+	for _, value := range s.Attachment {
+		stringSlice := strings.Split(value, e.UPLOAD_TMP_ALIAS_DELIMITER)
+		fileName := stringSlice[0]
+		fileAlias := stringSlice[1]
+		filePath := upload.GetTmpFilePath(fileName)
+		list[filePath] = fileAlias
+	}
+	return list
+}
+
+func (s *Smtp) DeleteAttachmentList() {
+	fileList := s.GetAttachmentList()
+	upload := &Upload{}
+
+	for filePath, _ := range fileList {
+		if e.UPLOAD_FILE_EXISTS == upload.CheckFile(filePath) {
+			file.Delete(filePath)
+		}
+	}
 }

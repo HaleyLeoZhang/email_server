@@ -18,6 +18,7 @@ type Email struct {
 	Receiver     string `json:"receiver"`
 	ReceiverName string `json:"receiver_name"`
 	Attachment   string `json:"attachment"`
+	Remark       string `json:"remark"`
 	IsOk         int    `json:"is_ok"`
 }
 

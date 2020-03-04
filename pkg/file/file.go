@@ -2,23 +2,11 @@ package file
 
 import (
 	"fmt"
-	"io/ioutil"
-	"mime/multipart"
+	// "io/ioutil"
+	// "mime/multipart"
 	"os"
-	"path"
+	// "path"
 )
-
-// GetSize get the file size
-func GetSize(f multipart.File) (int, error) {
-	content, err := ioutil.ReadAll(f)
-
-	return len(content), err
-}
-
-// GetExt get the file ext
-func GetExt(fileName string) string {
-	return path.Ext(fileName)
-}
 
 // CheckNotExist check if the file exists
 func CheckNotExist(src string) bool {
@@ -84,4 +72,12 @@ func MustOpen(fileName, filePath string) (*os.File, error) {
 	}
 
 	return f, nil
+}
+
+// Delete One file
+func Delete(filePath string) {
+	err := os.Remove(filePath)
+	if err != nil {
+		fmt.Errorf("Fail to DeleteFile : %v", err)
+	}
 }

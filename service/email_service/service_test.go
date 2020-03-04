@@ -1,5 +1,14 @@
 package email_service
 
+// ----------------------------------------------------------------------
+// email_service 测试
+// ----------------------------------------------------------------------
+// Link  : http://www.hlzblog.top/
+// GITHUB: https://github.com/HaleyLeoZhang
+// ----------------------------------------------------------------------
+// tesing包文档 https://golang.google.cn/pkg/testing/
+// ----------------------------------------------------------------------
+
 import (
 	"email_server/models"
 	"email_server/pkg/gredis"
@@ -16,7 +25,12 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func Test_DoPush(t *testing.T) {
+func TestCore(t *testing.T) {
+	// t.Run("EmailDoPush", emailDoPush)
+	// t.Run("CheckTmpFile", checkTmpFile)
+}
+
+func emailDoPush(t *testing.T) {
 	service := &Email{}
 
 	data := make(map[string]interface{})
@@ -33,16 +47,9 @@ func Test_DoPush(t *testing.T) {
 	}
 }
 
-// func Test_Send(t *testing.T) {
-// 	service := &Smtp{
-// 		Subject:      "测试",
-// 		Body:         "...",
-// 		Receiver:     []string{"229270575@qq.com", "haleyleozhang@sohu.com"},
-// 		ReceiverName: []string{"管理员", "报警机器人"},
-// 	}
-// 	err := service.Send()
-// 	if err != nil {
-// 		t.Fatalf("邮件发送失败: %v", err)
-// 	}
+func checkTmpFile(t *testing.T) {
+	u := &Upload{}
 
-// }
+	result := u.CheckFile("/data/logs/app/email_server/runtime/file/file-f7739845-ab82-4319-ac2e-ade8c8a1cb8e")
+	t.Fatalf("result: %v", result)
+}

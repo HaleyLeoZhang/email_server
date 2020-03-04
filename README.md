@@ -1,6 +1,10 @@
 # 序言
 本次主要使用 `golang` 重写 `email` 模块    
 
+
+###### 注意
+文件大小限制请在服务器层面完成,如 `nginx`  
+
 #### 要求清单
 
 * 接收发邮件的 HTTP 请求
@@ -11,7 +15,8 @@
         - [ ] Kafka
         - [x] 整合为简单工厂
     - 附件
-        - [ ] 多附件上传
+        - [x] 多附件上传
+            - 发送邮件时因为意外操作导致丢失了的附件,会记录到数据表中
 * 邮件发送服务
     - [x] 考虑邮件发送通道数、频率的限制
         - [x] 协程数量管控
@@ -52,9 +57,10 @@ CREATE TABLE `email`  (
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '邮件标题',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邮件内容',
   `sender_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '发件者姓名.发起方自定义',
-  `receiver` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '接收者邮箱.多个以逗号隔开',
-  `receiver_name` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '接收者姓名.多个以逗号隔开',
-  `attachment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '附件信息',
+  `receiver` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '接收者邮箱.多个以逗号隔开',
+  `receiver_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '接收者姓名.多个以逗号隔开',
+  `attachment` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '附件信息',
+  `remark` varchar(100) NOT NULL DEFAULT '' COMMENT '备注信息',
   `is_ok` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '枚举值 0:发送成功,1:发送失败',
   `is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '枚举值 0:正常,1:删除',
   `updated_at` datetime(0) NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT '更新时间',

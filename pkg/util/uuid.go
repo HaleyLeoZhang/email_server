@@ -1,11 +1,11 @@
 package util
 
 import (
-    "github.com/google/uuid"
-    "fmt"
+	"fmt"
+	"github.com/google/uuid"
 )
 
 func GetUuid() string {
-    u1 := uuid.Must(uuid.NewRandom())
-    return fmt.Sprintf("%s", u1)
+	u1 := uuid.Must(uuid.NewRandom())
+	return fmt.Sprintf("%s", u1)
 }

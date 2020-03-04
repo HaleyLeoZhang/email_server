@@ -10,17 +10,42 @@ package email_service
 // ----------------------------------------------------------------------
 
 import (
-    "email_server/pkg/setting"
+	"email_server/pkg/e"
+	"email_server/pkg/file"
+	"email_server/pkg/setting"
+	"email_server/pkg/util"
+	"fmt"
 )
 
-type Upload struct {}
+type Upload struct{}
 
-func (u *Upload) GetUploadDir() error {
-    return fmt.Sprintf("%s%s", setting.AppSetting.RuntimeRootPath, setting.AppSetting.UPLOAD_DIR)
+func (u *Upload) GetUploadDir() string {
+	dir := fmt.Sprintf("%s%s/upload", setting.AppSetting.RuntimeRootPath, setting.AppSetting.UPLOAD_DIR)
+	err := file.IsNotExistMkDir(dir)
+	if err != nil {
+		panic(fmt.Sprintf("文件夹创建失败: %s", err.Error()))
+	}
+	return dir
 }
 
-func (u *Upload) GetUploadPathFile() error {
-    path := u.GetUploadDir()
-    return fmt.Sprintf("%s/file-%s", setting.AppSetting.RuntimeRootPath, setting.AppSetting.UPLOAD_DIR)
+func (u *Upload) GetTmpFilePath(name string) string {
+	dir := u.GetUploadDir()
+	return fmt.Sprintf("%s/%s", dir, name)
 }
 
+func (u *Upload) CreateTmpFile() (string, string) {
+	name := util.GetUuid()
+	return u.GetTmpFilePath(name), name
+}
+
+func (u *Upload) DeleteTmpFile(name string) {
+	filePath := u.GetTmpFilePath(name)
+	file.Delete(filePath)
+}
+
+func (u *Upload) CheckFile(filePath string) bool {
+	if true == file.CheckNotExist(filePath) {
+		return e.UPLOAD_FILE_NOT_FOUND
+	}
+	return e.UPLOAD_FILE_EXISTS
+}

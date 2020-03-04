@@ -17,6 +17,8 @@ import (
 	"email_server/pkg/app"
 	"email_server/pkg/e"
 	"email_server/service/email_service"
+
+	"fmt"
 )
 
 /**
@@ -29,6 +31,7 @@ import (
  * @apiParam {string} sender_name 发件人昵称
  * @apiParam {string} receiver 收件人邮箱,多个以英文逗号隔开
  * @apiParam {string} receiver_name 收件人昵称,可不填,多个以英文逗号隔开
+ * @apiParam {file} attachment 多个附件---TODO
  *
  * @apiDescription  发送邮件
  *
@@ -58,7 +61,7 @@ func Send(c *gin.Context) {
 	data["receiver"] = com.StrTo(c.PostForm("receiver")).String()
 	data["receiver_name"] = com.StrTo(c.PostForm("receiver_name")).String()
 
-	// Multipart form
+	// Multipart form --- TODO 2020-3-4 23:51:21
 	form, err := c.MultipartForm()
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
@@ -66,13 +69,19 @@ func Send(c *gin.Context) {
 	}
 	files := form.File["attachment"]
 
+	upload := &email_service.Upload{}
+	attachment := []string{}
 	for _, file := range files {
-		if err := c.SaveUploadedFile(file, file.Filename); err != nil {
+		file_tmp_path, file_tmp_name := upload.CreateTmpFile()
+		file_alias := file.Filename
+		if err := c.SaveUploadedFile(file, file_tmp_path); err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 			return
 		}
+		one_tmp_info := fmt.Sprintf("%s%s%s", file_tmp_name, e.UPLOAD_TMP_ALIAS_DELIMITER, file_alias)
+		attachment = append(attachment, one_tmp_info)
 	}
-	// data["attachment"] = ""
+	data["attachment"] = attachment
 
 	valid := validation.Validation{}
 	valid.MinSize(data["title"], 1, "title")
@@ -92,7 +101,7 @@ func Send(c *gin.Context) {
 	}
 
 	service := email_service.Email{}
-	err := service.DoPush(data)
+	err = service.DoPush(data)
 
 	if err != nil {
 		err_info := []string{err.Error()}
