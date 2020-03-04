@@ -119,9 +119,9 @@ func (a *AMQP) handle(d amqp.Delivery, callback func(string) error) error {
 	if err != nil {
 		return err
 	}
-    one.Lock.Lock()
+	one.Lock.Lock()
 	d.Ack(false)
-    one.Lock.Unlock()
+	one.Lock.Unlock()
 	<-pool
 	return nil
 }
