@@ -58,14 +58,20 @@ func Send(c *gin.Context) {
 	data["receiver"] = com.StrTo(c.PostForm("receiver")).String()
 	data["receiver_name"] = com.StrTo(c.PostForm("receiver_name")).String()
 
-	// // 获取解析后表单
-	// form, _ := c.MultipartForm()
-	// //这里是多文件上传 在之前单文件upload上传的基础上加 [] 变成upload[] 类似文件数组的意思
-	// files := form.File["files[]"]
-	// //循环存文件到服务器本地
-	// for _, file := range files {
-	// 	c.SaveUploadedFile(file, file.Filename)
-	// }
+	// Multipart form
+	form, err := c.MultipartForm()
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
+		return
+	}
+	files := form.File["attachment"]
+
+	for _, file := range files {
+		if err := c.SaveUploadedFile(file, file.Filename); err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			return
+		}
+	}
 	// data["attachment"] = ""
 
 	valid := validation.Validation{}

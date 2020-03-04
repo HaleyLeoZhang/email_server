@@ -121,7 +121,7 @@ func (e *Email) getReceiverAndName(receiver string, receiver_name string) ([]str
 	receiver_arr := strings.Split(receiver, delimiter)
 
 	for _, email := range receiver_arr {
-		if false == util.RegEmail(email) {
+		if false == util.CheckEmail(email) {
 			return nil, nil, errors.New("receiver 含格式不正确的邮箱地址")
 		}
 	}

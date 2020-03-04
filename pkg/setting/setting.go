@@ -15,6 +15,7 @@ type App struct {
 	LogSaveName string
 	LogFileExt  string
 	TimeFormat  string
+    UPLOAD_DIR string
 }
 
 var AppSetting = &App{}
