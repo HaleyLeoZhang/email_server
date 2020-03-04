@@ -31,7 +31,7 @@ import (
  * @apiParam {string} sender_name 发件人昵称
  * @apiParam {string} receiver 收件人邮箱,多个以英文逗号隔开
  * @apiParam {string} receiver_name 收件人昵称,可不填,多个以英文逗号隔开
- * @apiParam {file} attachment 多个附件---TODO
+ * @apiParam {file}   attachment[] 多个附件请使用相同变量名.请使用 form-data 进行传输
  *
  * @apiDescription  发送邮件
  *
@@ -67,7 +67,7 @@ func Send(c *gin.Context) {
 		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
 		return
 	}
-	files := form.File["attachment"]
+	files := form.File["attachment[]"]
 
 	upload := &email_service.Upload{}
 	attachment := []string{}
