@@ -14,7 +14,6 @@ import (
 	"fmt"
 	"github.com/streadway/amqp"
 	// "time"
-	"sync"
 )
 
 type AMQP struct {
@@ -23,30 +22,6 @@ type AMQP struct {
 	// 当前驱动配置项
 	Exchange string
 	Queue    string
-}
-
-/**
- * 单例模式
- */
-type oneAMQP struct {
-	Conn *amqp.Connection
-	// 因为多协程共用一个tcp链接,防止并发交错错写入
-	// 但一个链接能建立多个通道
-	Lock sync.Mutex
-}
-
-var one oneAMQP
-
-func (a *AMQP) newConnect() *amqp.Connection {
-	if nil == one.Conn {
-		dial := fmt.Sprintf("amqp://%v:%v@%v:%v/", setting.AMQPSetting.USER, setting.AMQPSetting.PASSWORD, setting.AMQPSetting.HOST, setting.AMQPSetting.PORT)
-		var err error
-		one.Conn, err = amqp.Dial(dial)
-		if err != nil {
-			panic([]string{err.Error()})
-		}
-	}
-	return one.Conn
 }
 
 func (a *AMQP) SetPayload(payload []byte) {
@@ -106,11 +81,23 @@ func (a *AMQP) Pull(callback func(string) error) error {
 	for {
 		select {
 		case d := <-delivery:
-			pool <- 1
+			one.Pool <- 1
 			go a.handle(d, callback)
 		}
 	}
 	return nil
+}
+
+func (a *AMQP) newConnect() *amqp.Connection {
+	if nil == one.Conn {
+		dial := fmt.Sprintf("amqp://%v:%v@%v:%v/", setting.AMQPSetting.USER, setting.AMQPSetting.PASSWORD, setting.AMQPSetting.HOST, setting.AMQPSetting.PORT)
+		var err error
+		one.Conn, err = amqp.Dial(dial)
+		if err != nil {
+			panic([]string{err.Error()})
+		}
+	}
+	return one.Conn.(*amqp.Connection)
 }
 
 func (a *AMQP) handle(d amqp.Delivery, callback func(string) error) error {
@@ -122,6 +109,6 @@ func (a *AMQP) handle(d amqp.Delivery, callback func(string) error) error {
 	one.Lock.Lock()
 	d.Ack(false)
 	one.Lock.Unlock()
-	<-pool
+	<-one.Pool
 	return nil
 }

@@ -10,6 +10,7 @@ package queue
 import (
 	"email_server/pkg/e"
 	"email_server/pkg/setting"
+	"sync"
 )
 
 type Queue interface {
@@ -19,9 +20,19 @@ type Queue interface {
 }
 
 /**
- * 最大消费数量
+ * 包内全局变量
  */
-var pool chan int
+type oneInstacne struct {
+	// 单例连接
+	Conn interface{}
+	// 因为多协程共用一个tcp链接,防止并发交错错写入
+	// - 但一个连接能建立多个通道
+	Lock sync.Mutex
+	// 消费最大数量
+	Pool chan int
+}
+
+var one oneInstacne
 
 /**
  * 简单工厂
@@ -29,7 +40,7 @@ var pool chan int
  * @return queue.Queue
  */
 func GetEmailQueue() Queue {
-	pool = make(chan int, setting.QueueSetting.CHANNEL_NUMBER)
+	one.Pool = make(chan int, setting.QueueSetting.CHANNEL_NUMBER)
 	switch setting.QueueSetting.DRIVER {
 	case "amqp":
 		return &AMQP{
