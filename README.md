@@ -117,7 +117,7 @@ make build
     - `attachment[]` file 多个附件请使用相同变量名.请使用 form-data 进行传输
 
 ![](reademe/img/001.png)  
-`图 001`  
+`图 001` 发送样例  
 
 ###### 示例:正常请求
 
@@ -140,6 +140,9 @@ make build
     ]
 }
 ~~~
+
+![](reademe/img/002.png)  
+`图 002` 接收样例  
 
 > TODO
 
