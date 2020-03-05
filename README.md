@@ -116,9 +116,6 @@ make build
     - `receiver_name` string 接收者邮箱昵称,可以不填,多个以逗号隔开
     - `attachment[]` file 多个附件请使用相同变量名.请使用 form-data 进行传输
 
-![](reademe/img/001.png)  
-`图 001` 发送样例  
-
 ###### 示例:正常请求
 
 ~~~bash
@@ -141,9 +138,9 @@ make build
 }
 ~~~
 
+
+![](reademe/img/001.png)  
+`图 001` 发送样例  
+
 ![](reademe/img/002.png)  
-`图 002` 接收样例  
-
-> TODO
-
-支持多附件上传  
+`图 002` 邮件接收端样例  
