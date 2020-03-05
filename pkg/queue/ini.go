@@ -22,7 +22,7 @@ type oneInstacne struct {
 	// 因为多协程共用一个tcp链接,防止并发交错错写入
 	// - 但一个连接能建立多个通道
 	Lock sync.Mutex
-	// 消费最大数量
+	// 最大并发消费数量
 	Pool chan int
 }
 
@@ -34,7 +34,9 @@ var one oneInstacne
  * @return queue.Queue
  */
 func GetEmailQueue() Queue {
-	one.Pool = make(chan int, setting.QueueSetting.CHANNEL_NUMBER)
+	if nil == one.Pool {
+		one.Pool = make(chan int, setting.QueueSetting.CHANNEL_NUMBER)
+	}
 	switch setting.QueueSetting.DRIVER {
 	case "amqp":
 		return &AMQP{
