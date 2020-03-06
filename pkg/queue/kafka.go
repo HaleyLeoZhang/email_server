@@ -10,7 +10,7 @@ package queue
 // ----------------------------------------------------------------------
 
 type Kafka struct {
-	Payload  []byte
+	Payload []byte
 }
 
 func (q *Kafka) SetPayload(payload []byte) {
