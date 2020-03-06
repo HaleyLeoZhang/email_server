@@ -11,7 +11,6 @@ package queue
 
 type Kafka struct {
 	Payload  []byte
-	Callback func(string)
 }
 
 func (q *Kafka) SetPayload(payload []byte) {
@@ -23,7 +22,7 @@ func (q *Kafka) Push() error {
 	return nil
 }
 
-func (q *Kafka) Pull(callback func(string) error) error {
+func (q *Kafka) Pull(callback func([]byte) error) error {
 	// q.Payload
 	return nil
 }

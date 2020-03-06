@@ -56,7 +56,7 @@ func (a *AMQP) Push() error {
 	return nil
 }
 
-func (a *AMQP) Pull(callback func(string) error) error {
+func (a *AMQP) Pull(callback func([]byte) error) error {
 
 	conn := a.newConnect()
 
@@ -100,9 +100,9 @@ func (a *AMQP) newConnect() *amqp.Connection {
 	return one.Conn.(*amqp.Connection)
 }
 
-func (a *AMQP) handle(d amqp.Delivery, callback func(string) error) error {
+func (a *AMQP) handle(d amqp.Delivery, callback func([]byte) error) error {
 
-	err := callback(string(d.Body))
+	err := callback(d.Body)
 	if err != nil {
 		return err
 	}

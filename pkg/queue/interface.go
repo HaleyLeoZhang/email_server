@@ -9,6 +9,6 @@ package queue
 
 type Queue interface {
 	Push() error
-	Pull(callback func(string) error) error
+	Pull(callback func([]byte) error) error
 	SetPayload([]byte)
 }

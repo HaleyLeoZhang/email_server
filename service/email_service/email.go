@@ -81,10 +81,10 @@ func (e *Email) DoPull() error {
 	return nil
 }
 
-func doPull(payload string) error {
+func doPull(payload []byte) error {
 	smtp := &Smtp{}
 
-	err := json.Unmarshal([]byte(payload), smtp)
+	err := json.Unmarshal(payload, smtp)
 	if err != nil {
 		return nil
 	}
