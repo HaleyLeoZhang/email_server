@@ -4,6 +4,7 @@
 
 ###### 注意
 文件大小限制请在服务器层面完成,如 `nginx`  
+目前属于单机部署版本,只因为附件是临时存储到本地的  
 
 #### 要求清单
 
@@ -29,7 +30,7 @@
 请注意json中的数据类型  
 
 ## 常用功能
-基础工具命令都已集成到 `Makefile`
+基础工具命令都已集成到 [Makefile](Makefile)
 
 > 生成配置文件
 
@@ -84,6 +85,7 @@ make tool
 make test
 ~~~
 
+[tesing 包文档](https://golang.google.cn/pkg/testing/)  
 关于单元测试的书写  
 
 ~~~bash
