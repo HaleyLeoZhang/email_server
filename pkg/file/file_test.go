@@ -13,19 +13,13 @@ import (
 	"testing"
 )
 
-// func TestMain(m *testing.M) {
-//     setting.Setup()
-//     models.Setup()
-//     logging.Setup()
-//     gredis.Setup()
-//     m.Run()
-// }
-
 func TestCore(t *testing.T) {
 	t.Run("CheckNotExist", checkNotExist)
 }
 
 func checkNotExist(t *testing.T) {
 	notExist := CheckNotExist("/data/logs/app/email_server/runtime/file/file-7e733705-1e5f-4b00-aad0-a317c50d6612")
-	t.Fatalf("result %v", notExist)
+	if false == notExist {
+		t.Fatalf("result %v", notExist)
+	}
 }

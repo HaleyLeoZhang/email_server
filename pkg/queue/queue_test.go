@@ -25,35 +25,38 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-// func Test_AMQP_PUSH(t *testing.T) {
-// 	queue := &AMQP{
-// 		Payload:  []byte("haleyleozhang@sohu.com"),
-// 		Exchange: "email_sender",
-// 		Queue:    "email_sender",
-// 	}
+func TestCore(t *testing.T) {
+	t.Run("Push", Push)
+	t.Run("Pull", Pull)
+}
 
-//     q := queue.GetEmailQueue()
-//     q.SetPayload(payload)
+func Push(t *testing.T) {
+	q := GetEmailQueue()
+	q.SetPayload([]byte(`{"title":"For test","content":"unit test","sender_name":"local","receiver":"haleyleozhang@sohu.com","receiver_name":""}`))
 
-// 	err := queue.Push()
-// 	if err != nil {
-// 		t.Fatalf("测试失败: %s \n", err)
-// 	}
-//     defer queue.CloseConnect()
-// }
+	err := q.Push()
+	if err != nil {
+		t.Fatalf("生产消息失败: %s \n", err)
+	}
+}
 
-// func Test_AMQP_Pull(t *testing.T) {
-// 	queue := &AMQP{
-// 		Exchange: "email_sender",
-// 		Queue:    "email_sender",
-// 	}
-// 	err := queue.Pull(callPull)
-// 	if err != nil {
-// 		t.Fatalf("测试失败: %s \n", err)
-// 	}
-// }
+var testFlagClose chan int
 
-// func callPull(data string) error {
-// 	fmt.Printf("消费数据 %s \n", data)
-// 	return nil
-// }
+func Pull(t *testing.T) {
+	testFlagClose = make(chan int, 1)
+	q := GetEmailQueue()
+	go func() {
+		err := q.Pull(callPull)
+		if err != nil {
+			t.Fatalf("消费消息失败: %s \n", err)
+		}
+	}()
+	<-testFlagClose
+	q.Close() // 记得单元测试关闭连接
+}
+
+func callPull(payload []byte) error {
+	logging.Debug("消费数据 %v \n", string(payload))
+	testFlagClose <- 1
+	return nil
+}

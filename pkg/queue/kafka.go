@@ -26,3 +26,7 @@ func (q *Kafka) Pull(callback func([]byte) error) error {
 	// q.Payload
 	return nil
 }
+
+func (a *Kafka) Close() error {
+	return nil
+}

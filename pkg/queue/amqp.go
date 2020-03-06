@@ -88,6 +88,11 @@ func (a *AMQP) Pull(callback func([]byte) error) error {
 	return nil
 }
 
+func (a *AMQP) Close() error {
+	err := one.Conn.(*amqp.Connection).Close()
+	return err
+}
+
 func (a *AMQP) newConnect() *amqp.Connection {
 	if nil == one.Conn {
 		dial := fmt.Sprintf("amqp://%v:%v@%v:%v/", setting.AMQPSetting.USER, setting.AMQPSetting.PASSWORD, setting.AMQPSetting.HOST, setting.AMQPSetting.PORT)

@@ -11,4 +11,5 @@ type Queue interface {
 	Push() error
 	Pull(callback func([]byte) error) error
 	SetPayload([]byte)
+	Close() error
 }
