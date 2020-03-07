@@ -78,11 +78,12 @@ func (a *AMQP) Pull(callback func([]byte) error) error {
 	)
 	one.Lock.Unlock()
 
+	pool := make(chan int, setting.QueueSetting.CHANNEL_NUMBER)
 	for {
 		select {
 		case d := <-delivery:
-			one.Pool <- 1
-			go a.handle(d, callback)
+			pool <- 1
+			go a.handle(d, callback, pool)
 		}
 	}
 	return nil
@@ -105,7 +106,7 @@ func (a *AMQP) newConnect() *amqp.Connection {
 	return one.Conn.(*amqp.Connection)
 }
 
-func (a *AMQP) handle(d amqp.Delivery, callback func([]byte) error) error {
+func (a *AMQP) handle(d amqp.Delivery, callback func([]byte) error, pool chan int) error {
 
 	err := callback(d.Body)
 	if err != nil {
@@ -114,6 +115,6 @@ func (a *AMQP) handle(d amqp.Delivery, callback func([]byte) error) error {
 	one.Lock.Lock()
 	d.Ack(false)
 	one.Lock.Unlock()
-	<-one.Pool
+	<-pool
 	return nil
 }
