@@ -53,22 +53,22 @@ rabbitMQ 请配置 `queue` 名为 `email_sender`
 CREATE DATABASE common_service charset = utf8mb4;
 
 DROP TABLE IF EXISTS `email`;
-CREATE TABLE `email`  (
-  `id` int(1) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '邮件标题',
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邮件内容',
-  `sender_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '发件者姓名.发起方自定义',
-  `receiver` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '接收者邮箱.多个以逗号隔开',
-  `receiver_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '接收者姓名.多个以逗号隔开',
-  `attachment` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '附件信息',
-  `remark` varchar(100) NOT NULL DEFAULT '' COMMENT '备注信息',
-  `is_ok` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '枚举值 0:发送成功,1:发送失败',
-  `is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '枚举值 0:正常,1:删除',
-  `updated_at` datetime(0) NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT '更新时间',
-  `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx-created_at`(`created_at`) USING BTREE
-) ENGINE = InnoDB  CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '邮件服务' ROW_FORMAT = Compact;
+CREATE TABLE `email` (
+`id` INT ( 1 ) UNSIGNED NOT NULL AUTO_INCREMENT,
+`title` VARCHAR ( 255 ) NOT NULL DEFAULT '' COMMENT '邮件标题',
+`content` text NOT NULL COMMENT '邮件内容',
+`sender_name` VARCHAR ( 50 ) NOT NULL DEFAULT '' COMMENT '发件者姓名.发起方自定义',
+`receiver` text NOT NULL COMMENT '接收者邮箱.多个以逗号隔开',
+`receiver_name` text NOT NULL COMMENT '接收者姓名.多个以逗号隔开',
+`attachment` VARCHAR ( 1000 ) NOT NULL DEFAULT '' COMMENT '附件信息',
+`remark` VARCHAR ( 100 ) NOT NULL DEFAULT '' COMMENT '备注信息',
+`is_ok` TINYINT ( 1 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '枚举值 0:发送成功,1:发送失败',
+`is_deleted` TINYINT ( 1 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '枚举值 0:正常,1:删除',
+`updated_at` datetime NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT '更新时间',
+`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+PRIMARY KEY ( `id` ) USING BTREE,
+KEY `idx-created_at` ( `created_at` ) USING BTREE 
+) ENGINE = INNODB DEFAULT CHARSET = utf8mb4 ROW_FORMAT = COMPACT COMMENT = '邮件服务';
 ~~~
 
 > 更多
