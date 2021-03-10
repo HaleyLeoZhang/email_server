@@ -1,4 +1,4 @@
-package e
+package constant
 
 // 文件分割逻辑常量
 

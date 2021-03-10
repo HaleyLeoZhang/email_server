@@ -1,7 +1,7 @@
 package logging
 
 import (
-	"email_server/pkg/file"
+	"github.com/HaleyLeoZhang/email_server/pkg/file"
 	"fmt"
 	"log"
 	"os"

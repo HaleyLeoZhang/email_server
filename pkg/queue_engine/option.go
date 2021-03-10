@@ -1,4 +1,4 @@
-package queue
+package queue_engine
 
 // ----------------------------------------------------------------------
 // 初始化包
@@ -8,36 +8,18 @@ package queue
 // ----------------------------------------------------------------------
 
 import (
-	"email_server/pkg/e"
-	"email_server/pkg/setting"
-	"sync"
+	"github.com/HaleyLeoZhang/email_server/conf"
 )
-
-/**
- * 包内全局变量
- */
-type oneInstacne struct {
-	// 单例连接
-	Conn interface{}
-	// 因为多协程共用一个tcp链接,防止并发交错错写入
-	// - 但一个连接能建立多个通道
-	Lock sync.Mutex
-}
-
-var one oneInstacne
 
 /**
  * 简单工厂
  *
- * @return queue.Queue
+ * @return queue_engine.Queue
  */
 func GetEmailQueue() Queue {
-	switch setting.QueueSetting.DRIVER {
+	switch conf.Conf.Email.Driver {
 	case "amqp":
-		return &AMQP{
-			Exchange: e.AMQP_MAIL_EXCHANGE,
-			Queue:    e.AMQP_MAIL_QUEUE,
-		}
+		return &RabbitMq{}
 	case "kafka":
 		return &Kafka{}
 	default:

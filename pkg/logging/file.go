@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"email_server/pkg/setting"
+	"github.com/HaleyLeoZhang/email_server/pkg/setting"
 )
 
 // getLogFilePath get the log file save path

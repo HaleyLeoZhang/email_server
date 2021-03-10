@@ -1,4 +1,6 @@
-package queue
+package queue_engine
+
+import "github.com/HaleyLeoZhang/email_server/service"
 
 // ----------------------------------------------------------------------
 // 接口限定
@@ -8,8 +10,6 @@ package queue
 // ----------------------------------------------------------------------
 
 type Queue interface {
-	Push() error
-	Pull(callback func([]byte) error) error
-	SetPayload([]byte)
-	Close() error
+	Push(s *service.Service, payload []byte) error
+	Pull(s *service.Service, callback func([]byte) error) error
 }

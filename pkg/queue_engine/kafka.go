@@ -1,4 +1,8 @@
-package queue
+package queue_engine
+
+import (
+	"github.com/HaleyLeoZhang/email_server/service"
+)
 
 // ----------------------------------------------------------------------
 // Kafka
@@ -9,24 +13,12 @@ package queue
 // 包源 https://github.com/optiopay/kafka
 // ----------------------------------------------------------------------
 
-type Kafka struct {
-	Payload []byte
-}
+type Kafka struct{}
 
-func (q *Kafka) SetPayload(payload []byte) {
-	q.Payload = payload
-}
-
-func (q *Kafka) Push() error {
-	// q.Payload
+func (k *Kafka) Push(s *service.Service, payload []byte) error {
 	return nil
 }
 
-func (q *Kafka) Pull(callback func([]byte) error) error {
-	// q.Payload
-	return nil
-}
-
-func (a *Kafka) Close() error {
+func (k *Kafka) Pull(s *service.Service, callback func([]byte) error) error {
 	return nil
 }

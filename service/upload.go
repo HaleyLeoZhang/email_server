@@ -1,4 +1,4 @@
-package email_service
+package service
 
 // ----------------------------------------------------------------------
 // 完成SMTP发送
@@ -10,17 +10,15 @@ package email_service
 // ----------------------------------------------------------------------
 
 import (
-	"email_server/pkg/e"
-	"email_server/pkg/file"
-	"email_server/pkg/setting"
-	"email_server/pkg/util"
 	"fmt"
+	"github.com/HaleyLeoZhang/email_server/conf"
+	"github.com/HaleyLeoZhang/email_server/constant"
+	"github.com/HaleyLeoZhang/email_server/pkg/file"
+	"github.com/HaleyLeoZhang/email_server/pkg/util"
 )
 
-type Upload struct{}
-
-func (u *Upload) GetUploadDir() string {
-	dir := fmt.Sprintf("%s%s/upload", setting.AppSetting.RuntimeRootPath, setting.AppSetting.UPLOAD_DIR)
+func (s *Service) UploadGetUploadDir() string {
+	dir := conf.Conf.Email.UploadFile.Dir
 	err := file.IsNotExistMkDir(dir)
 	if err != nil {
 		panic(fmt.Sprintf("文件夹创建失败: %s", err.Error()))
@@ -28,24 +26,24 @@ func (u *Upload) GetUploadDir() string {
 	return dir
 }
 
-func (u *Upload) GetTmpFilePath(name string) string {
-	dir := u.GetUploadDir()
+func (s *Service) UploadGetTmpFilePath(name string) string {
+	dir := s.UploadGetUploadDir()
 	return fmt.Sprintf("%s/%s", dir, name)
 }
 
-func (u *Upload) CreateTmpFile() (string, string) {
+func (s *Service) UploadCreateTmpFile() (string, string) {
 	name := util.GetUuid()
-	return u.GetTmpFilePath(name), name
+	return s.UploadGetTmpFilePath(name), name
 }
 
-func (u *Upload) DeleteTmpFile(name string) {
-	filePath := u.GetTmpFilePath(name)
+func (s *Service) UploadDeleteTmpFile(name string) {
+	filePath := s.UploadGetTmpFilePath(name)
 	file.Delete(filePath)
 }
 
-func (u *Upload) CheckFile(filePath string) bool {
+func (s *Service) UploadCheckFile(filePath string) bool {
 	if true == file.CheckNotExist(filePath) {
-		return e.UPLOAD_FILE_NOT_FOUND
+		return constant.UPLOAD_FILE_NOT_FOUND
 	}
-	return e.UPLOAD_FILE_EXISTS
+	return constant.UPLOAD_FILE_EXISTS
 }

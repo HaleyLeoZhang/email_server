@@ -10,16 +10,16 @@ package util
 // ----------------------------------------------------------------------
 
 import (
-	"email_server/models"
-	"email_server/pkg/gredis"
-	"email_server/pkg/logging"
-	"email_server/pkg/setting"
+	"github.com/HaleyLeoZhang/email_server/model"
+	"github.com/HaleyLeoZhang/email_server/pkg/gredis"
+	"github.com/HaleyLeoZhang/email_server/pkg/logging"
+	"github.com/HaleyLeoZhang/email_server/pkg/setting"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
 	setting.Setup()
-	models.Setup()
+	model.Setup()
 	logging.Setup()
 	gredis.Setup()
 	m.Run()

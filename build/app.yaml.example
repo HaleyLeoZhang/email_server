@@ -1,0 +1,69 @@
+serviceName: email_server
+
+httpServer:
+  name: email_server
+  ip: 0.0.0.0
+  port: 8100
+  readTimeout: 3s
+  writeTimeout: 3s
+  maxHeaderBytes: 1048576
+
+gin:
+  name: email_server
+  debug: true
+  timeout: 2s
+
+db:
+  name: email_server
+  type: mysql
+  host: 192.168.56.110
+  port: 3306
+  database: common_service
+  user: yth_blog
+  password: http://hlzblog.top
+  maxIdleConns: 50
+  maxOpenConns: 30
+  maxLeftTime: 30s
+
+redis:
+  name: email_server
+  proto: tcp
+  addr: 192.168.56.110:6379
+  auth: zhangli
+  dialTimeout: 100ms
+  readTimeout: 200ms
+  writeTimeout: 200ms
+  expire: 10s
+  pool:
+    maxActive: 50
+    maxIdle: 10
+    idleTimeout: 80s
+
+log:
+  name: email_server
+  stdout: true
+  dir: "/tmp/email_server"
+
+email:
+  driver: "amqp" # 队列驱动枚举 amqp 、kafka
+  consumer: 3 # 并发消费数量
+  batchNumber: 3 # 每次拉取的消息量
+  uploadFile:
+    dir: "/tmp/email_server/upload"
+  smtp: # 示例: qq邮箱, 当然你也可以用其他邮箱
+    host: "smtp.qq.com" # qq的邮箱的 smtp 服务
+    port: 587
+    tls: true
+    fromAddr: "hlzblog@vip.qq.com" # QQ邮箱------需要改--------------
+    user: "" # QQ号-----------------------------需要改---------------
+    password: "" # POP3密码----------------------需要改---------------
+
+rabbitmq:
+  name: "email_server_local"
+  host: "192.168.56.110"
+  port: 5672
+  user: "guest"
+  password: "guest"
+  emailExchange: "amq.topic" // 邮件服务的交换机名
+  emailQueue: "email_server.sender" // 邮件服务的消费队列名
+  emailRoutineKey: "email_server_sender" // 邮件服务的路由键名

@@ -1,19 +1,8 @@
-package email_service
-
-// ----------------------------------------------------------------------
-// 完成SMTP发送
-// ----------------------------------------------------------------------
-// Link  : http://www.hlzblog.top/
-// GITHUB: https://github.com/HaleyLeoZhang
-// ----------------------------------------------------------------------
-// 文档 http://www.voidcn.com/article/p-poayptxe-bwd.html
-// ----------------------------------------------------------------------
+package bo
 
 import (
 	"crypto/tls"
-	"email_server/pkg/e"
-	"email_server/pkg/file"
-	"email_server/pkg/setting"
+	"github.com/HaleyLeoZhang/email_server/pkg/file"
 	"gopkg.in/gomail.v2"
 	"strings"
 )
@@ -27,6 +16,7 @@ type Smtp struct {
 	Attachment   []string `json:"attachment"`
 	Remark       []string `json:"remark"`
 }
+
 
 func (s *Smtp) Send() error {
 

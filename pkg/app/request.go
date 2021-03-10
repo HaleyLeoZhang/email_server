@@ -3,7 +3,7 @@ package app
 import (
 	"github.com/astaxie/beego/validation"
 
-	"email_server/pkg/logging"
+	"github.com/HaleyLeoZhang/email_server/pkg/logging"
 )
 
 // MarkErrors logs error logs

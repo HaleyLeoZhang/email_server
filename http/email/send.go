@@ -8,17 +8,17 @@ package email
 // ----------------------------------------------------------------------
 
 import (
+	"github.com/HaleyLeoZhang/email_server/constant"
+	service2 "github.com/HaleyLeoZhang/email_server/service"
 	"net/http"
 
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
 
-	"email_server/pkg/app"
-	"email_server/pkg/e"
-	"email_server/service/email_service"
-
 	"fmt"
+	"github.com/HaleyLeoZhang/email_server/pkg/app"
+	"github.com/HaleyLeoZhang/email_server/pkg/e"
 )
 
 /**
@@ -69,17 +69,17 @@ func Send(c *gin.Context) {
 	}
 	files := form.File["attachment[]"]
 
-	upload := &email_service.Upload{}
-	attachment := []string{}
+	upload := &service2.Upload{}
+	attachment := make([]string, 0)
 	for _, file := range files {
-		file_tmp_path, file_tmp_name := upload.CreateTmpFile()
-		file_alias := file.Filename
-		if err := c.SaveUploadedFile(file, file_tmp_path); err != nil {
+		fileTmpPath, fileTmpName := upload.CreateTmpFile()
+		fileAlias := file.Filename
+		if err := c.SaveUploadedFile(file, fileTmpPath); err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 			return
 		}
-		one_tmp_info := fmt.Sprintf("%s%s%s", file_tmp_name, e.UPLOAD_TMP_ALIAS_DELIMITER, file_alias)
-		attachment = append(attachment, one_tmp_info)
+		oneTmpInfo := fmt.Sprintf("%s%s%s", fileTmpName, constant.UPLOAD_TMP_ALIAS_DELIMITER, fileAlias)
+		attachment = append(attachment, oneTmpInfo)
 	}
 	data["attachment"] = attachment
 
@@ -100,12 +100,12 @@ func Send(c *gin.Context) {
 		return
 	}
 
-	service := email_service.Email{}
+	service := service2.Email{}
 	err = service.DoPush(data)
 
 	if err != nil {
-		err_info := []string{err.Error()}
-		appG.Response(http.StatusInternalServerError, e.INVALID_PARAMS, err_info)
+		errInfo := []string{err.Error()}
+		appG.Response(http.StatusInternalServerError, e.INVALID_PARAMS, errInfo)
 		return
 	}
 
