@@ -73,24 +73,6 @@ CREATE TABLE `email` (
 make tool
 ~~~
 
-###### 单元测试
-
-~~~bash
-make test
-~~~
-
-[tesing 包文档](https://golang.google.cn/pkg/testing/)  
-关于单元测试的书写  
-
-~~~bash
-文件必须以 ...test.go 结尾
-测试函数必须以 TestX... 开头, X 可以是 _ 或者大写字母，不可以是小写字母或数字
-参数：*testing.T
-样本测试必须以 Example... 开头，输入使用注释的形式
-TestMain 每个包只有一个，参数为 *testing.M
-t.Error 为打印错误信息,并当前test case会被跳过
-~~~
-
 ##### 示例运行
 
 ~~~bash
@@ -126,11 +108,9 @@ make deploy
 
 ~~~bash
 {
-    "code": 1001,
-    "message": "请求参数错误",
-    "data": [
-        "receiver 含格式不正确的邮箱地址"
-    ]
+    "code": 400,
+    "message": "Param is invalid",
+    "data": null
 }
 ~~~
 
