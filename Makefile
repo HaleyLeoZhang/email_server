@@ -10,7 +10,7 @@ ini:
 	@cp conf/app.ini /usr/local/etc/mail.ops.hlzblog.top.ini
 	@echo "Copy ---DONE"
 
-build:
+compile:
 	@rm -rf email_server
 	@echo "App is creating. Please wait ..."
 	@go build -o email_server -v ./build/main.go
@@ -21,7 +21,7 @@ run:
 
 deploy:
 	@make ini
-	@make build
+	@make compile
 	@make run
 
 tool:
