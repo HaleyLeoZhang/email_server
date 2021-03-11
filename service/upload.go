@@ -13,13 +13,12 @@ import (
 	"fmt"
 	"github.com/HaleyLeoZhang/email_server/conf"
 	"github.com/HaleyLeoZhang/email_server/constant"
-	"github.com/HaleyLeoZhang/email_server/pkg/file"
-	"github.com/HaleyLeoZhang/email_server/pkg/util"
+	"github.com/HaleyLeoZhang/email_server/util"
 )
 
 func (s *Service) UploadGetUploadDir() string {
 	dir := conf.Conf.Email.UploadFile.Dir
-	err := file.IsNotExistMkDir(dir)
+	err := util.IsNotExistMkDir(dir)
 	if err != nil {
 		panic(fmt.Sprintf("文件夹创建失败: %s", err.Error()))
 	}
@@ -38,11 +37,11 @@ func (s *Service) UploadCreateTmpFile() (string, string) {
 
 func (s *Service) UploadDeleteTmpFile(name string) {
 	filePath := s.UploadGetTmpFilePath(name)
-	file.Delete(filePath)
+	util.Delete(filePath)
 }
 
 func (s *Service) UploadCheckFile(filePath string) bool {
-	if true == file.CheckNotExist(filePath) {
+	if true == util.CheckNotExist(filePath) {
 		return constant.UPLOAD_FILE_NOT_FOUND
 	}
 	return constant.UPLOAD_FILE_EXISTS

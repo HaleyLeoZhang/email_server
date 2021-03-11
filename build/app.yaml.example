@@ -4,14 +4,14 @@ httpServer:
   name: email_server
   ip: 0.0.0.0
   port: 8100
-  readTimeout: 3s
-  writeTimeout: 3s
+  readTimeout: 5s
+  writeTimeout: 5s
   maxHeaderBytes: 1048576
 
 gin:
   name: email_server
   debug: true
-  timeout: 2s
+  timeout: 5s
 
 db:
   name: email_server
@@ -50,15 +50,15 @@ email:
   batchNumber: 3 # 每次拉取的消息量
   uploadFile:
     dir: "/tmp/email_server/upload"
-  smtp: # 示例: qq邮箱, 当然你也可以用其他邮箱
-    host: "smtp.qq.com" # qq的邮箱的 smtp 服务
+  smtp:
+    host: "smtp.qq.com"
     port: 587
     tls: true
     fromAddr: "hlzblog@vip.qq.com" # QQ邮箱------需要改--------------
     user: "" # QQ号-----------------------------需要改---------------
     password: "" # POP3密码----------------------需要改---------------
 
-rabbitmq:
+rabbitMq:
   name: "email_server_local"
   host: "192.168.56.110"
   port: 5672

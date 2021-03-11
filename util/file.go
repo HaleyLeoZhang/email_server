@@ -1,7 +1,9 @@
-package file
+package util
 
 import (
-	"fmt"
+	"github.com/HaleyLeoZhang/go-component/driver/xlog"
+	"github.com/pkg/errors"
+
 	// "io/ioutil"
 	// "mime/multipart"
 	"os"
@@ -37,47 +39,18 @@ func IsNotExistMkDir(src string) error {
 func MkDir(src string) error {
 	err := os.MkdirAll(src, os.ModePerm)
 	if err != nil {
+		err = errors.WithStack(err)
 		return err
 	}
 
 	return nil
 }
 
-// Open a file according to a specific mode
-func Open(name string, flag int, perm os.FileMode) (*os.File, error) {
-	f, err := os.OpenFile(name, flag, perm)
-	if err != nil {
-		return nil, err
-	}
-
-	return f, nil
-}
-
-// MustOpen maximize trying to open the file
-func MustOpen(fileName, filePath string) (*os.File, error) {
-	src := filePath
-	perm := CheckPermission(src)
-	if perm == true {
-		return nil, fmt.Errorf("file.CheckPermission Permission denied src: %s", src)
-	}
-
-	err := IsNotExistMkDir(src)
-	if err != nil {
-		return nil, fmt.Errorf("file.IsNotExistMkDir src: %s, err: %v", src, err)
-	}
-
-	f, err := Open(src+fileName, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
-	if err != nil {
-		return nil, fmt.Errorf("Fail to OpenFile :%v", err)
-	}
-
-	return f, nil
-}
-
 // Delete One file
 func Delete(filePath string) {
 	err := os.Remove(filePath)
 	if err != nil {
-		fmt.Errorf("Fail to DeleteFile : %v", err)
+		err = errors.WithStack(err)
+		xlog.Errorf("err(%+v)", err)
 	}
 }

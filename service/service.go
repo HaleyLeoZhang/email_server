@@ -9,7 +9,7 @@ import (
 )
 
 type Service struct {
-	DB *dao.Dao
+	DB       *dao.Dao
 	RabbitMQ *xrabbitmq.AMQP
 }
 
@@ -24,13 +24,13 @@ func New() *Service {
 	return s
 }
 
-func (s *Service) Start()  {
+func (s *Service) Start() {
 	// 初始化消费者
 	if s.RabbitMQ != nil {
-		s.RabbitMQ.PullLimit = conf.Conf.Email.BatchNumber // 每次最多拉多少条
+		s.RabbitMQ.PullLimit = conf.Conf.Email.BatchNumber     // 每次最多拉多少条
 		s.RabbitMQ.ConsumerLimit = conf.Conf.Email.BatchNumber // 每次最多 多少个消费者
-		s.RabbitMQ.Exchange = constant.RABBIT_MQ_EXCHANGE // 交换机名
-		s.RabbitMQ.Queue = constant.RABBIT_MQ_QUEUE // 交换机
+		s.RabbitMQ.Exchange = constant.RABBIT_MQ_EXCHANGE      // 交换机名
+		s.RabbitMQ.Queue = constant.RABBIT_MQ_QUEUE            // 交换机
 		s.RabbitMQ.Start()
 		s.RabbitMQ.QueueDeclare()
 		s.RabbitMQ.BindRoutingKey(constant.RABBIT_MQ_ROUTIE_KEY) // 初始化约定要绑定的 routing_key

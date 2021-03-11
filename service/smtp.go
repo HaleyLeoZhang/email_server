@@ -14,42 +14,41 @@ import (
 	"github.com/HaleyLeoZhang/email_server/conf"
 	"github.com/HaleyLeoZhang/email_server/constant"
 	"github.com/HaleyLeoZhang/email_server/model/bo"
-	"github.com/HaleyLeoZhang/email_server/model/vo"
-	"github.com/HaleyLeoZhang/email_server/pkg/file"
+	"github.com/HaleyLeoZhang/email_server/util"
+	"github.com/pkg/errors"
 	"gopkg.in/gomail.v2"
 	"strings"
 )
 
-
-func (s *Service) SmtpSend(param *vo.SendEmailRequest) error {
+func (s *Service) SmtpSend(smtp *bo.Smtp) (err error) {
 	// 内容配置
 	m := gomail.NewMessage()
-	m.SetAddressHeader("From",  conf.Conf.Email.Smtp.FromAddr, param.SenderName)
+	m.SetAddressHeader("From", conf.Conf.Email.Smtp.FromAddr, smtp.SenderName)
 
 	noReceiver := false
-	if len(param.ReceiverName) == 0 {
+	if len(smtp.ReceiverName) == 0 {
 		noReceiver = true
 	}
 
-	lenReceiver := len(param.Receiver)
+	lenReceiver := len(smtp.Receiver)
 	formatEmails := make([]string, 0, lenReceiver)
-	for key, _ := range param.Receiver {
+	for key, _ := range smtp.Receiver {
 		if noReceiver {
-			formatEmails = append(formatEmails, m.FormatAddress(param.Receiver[key], ""))
+			formatEmails = append(formatEmails, m.FormatAddress(smtp.Receiver[key], ""))
 		} else {
-			formatEmails = append(formatEmails, m.FormatAddress(param.Receiver[key], param.ReceiverName[key]))
+			formatEmails = append(formatEmails, m.FormatAddress(smtp.Receiver[key], smtp.ReceiverName[key]))
 		}
 	}
 	m.SetHeader("To", formatEmails...)
-	m.SetHeader("Subject", param.Subject)
-	m.SetBody("text/html", param.Body)
+	m.SetHeader("Subject", smtp.Subject)
+	m.SetBody("text/html", smtp.Body)
 
-	fileList := s.SmtpGetAttachmentList(param.Smtp)
+	fileList := s.SmtpGetAttachmentList(smtp)
 	for filePath, fileAlias := range fileList {
 		if constant.UPLOAD_FILE_EXISTS == s.UploadCheckFile(filePath) {
 			m.Attach(filePath, gomail.Rename(fileAlias))
 		} else {
-			param.Remark = append(param.Remark, "Not Found: "+fileAlias)
+			smtp.Remark = append(smtp.Remark, "Not Found: "+fileAlias)
 		}
 	}
 
@@ -63,13 +62,12 @@ func (s *Service) SmtpSend(param *vo.SendEmailRequest) error {
 	d.TLSConfig = &tls.Config{
 		InsecureSkipVerify: conf.Conf.Email.Smtp.Tls,
 	}
-
-	if err := d.DialAndSend(m); err != nil {
-		panic(err)
+	err = d.DialAndSend(m)
+	if err != nil {
+		err = errors.WithStack(err)
+		return
 	}
-
-	return nil
-
+	return
 }
 
 func (s *Service) SmtpGetAttachmentList(smtp *bo.Smtp) map[string]string {
@@ -89,7 +87,7 @@ func (s *Service) SmtpDeleteAttachmentList(smtp *bo.Smtp) {
 
 	for filePath, _ := range fileList {
 		if constant.UPLOAD_FILE_EXISTS == s.UploadCheckFile(filePath) {
-			file.Delete(filePath)
+			util.Delete(filePath)
 		}
 	}
 }

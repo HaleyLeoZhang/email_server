@@ -13,12 +13,11 @@ ini:
 build:
 	@rm -rf email_server
 	@echo "App is creating. Please wait ..."
-	@go build -o email_server -v .
+	@go build -o email_server -v ./build/main.go
 	@echo "App is created"
 
 run:
 	@./email_server -conf=./build/app.yaml
-
 
 deploy:
 	@make ini

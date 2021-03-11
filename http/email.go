@@ -8,17 +8,12 @@ package http
 // ----------------------------------------------------------------------
 
 import (
+	"fmt"
 	"github.com/HaleyLeoZhang/email_server/constant"
 	"github.com/HaleyLeoZhang/email_server/model/vo"
 	"github.com/HaleyLeoZhang/go-component/driver/xgin"
-	"net/http"
-
-	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
-	"github.com/unknwon/com"
-
-	"fmt"
-	"github.com/HaleyLeoZhang/email_server/pkg/app"
+	"mime/multipart"
 )
 
 /**
@@ -54,67 +49,48 @@ import (
 func EmailSend(c *gin.Context) {
 	xGin := xgin.NewGin(c)
 
-	data := make(map[string]interface{})
-	data["title"] = com.StrTo(c.PostForm("title")).String()
-	data["content"] = com.StrTo(c.PostForm("content")).String()
-	data["sender_name"] = com.StrTo(c.PostForm("sender_name")).String()
-	data["receiver"] = com.StrTo(c.PostForm("receiver")).String()
-	data["receiver_name"] = com.StrTo(c.PostForm("receiver_name")).String()
-
-	// 获取基础信息
-	param := &vo.ComicListParam{}
+	// - 获取基础信息
+	param := &vo.SendEmailRequest{}
 	err := c.Bind(param)
 	if err != nil {
 		err = &xgin.BusinessError{Code: xgin.HTTP_RESPONSE_CODE_PARAM_INVALID, Message: "Param is invalid"}
 		xGin.Response(err, nil)
 		return
 	}
-	// Multipart form --- TODO 2020-3-4 23:51:21
+	smtp, err := param.GetSmtpObject()
+	if err != nil {
+		xGin.Response(err, nil)
+		return
+	}
+	// - 获取上传的文件
 	form, err := c.MultipartForm()
 	if err != nil {
 		xGin.Response(err, nil)
 		return
 	}
 	files := form.File["attachment[]"]
-	attachment := make([]string, 0)
+	smtp.Attachment, err = emailGetFiles(c, files)
+
+	err = srv.DoPushMessage(smtp)
+
+	if err != nil {
+		xGin.Response(err, nil)
+		return
+	}
+	xGin.Response(err, nil)
+	return
+}
+
+func emailGetFiles(c *gin.Context, files []*multipart.FileHeader) (attachment []string, err error) {
 	for _, file := range files {
 		fileTmpPath, fileTmpName := srv.UploadCreateTmpFile()
 		fileAlias := file.Filename
-		if err := c.SaveUploadedFile(file, fileTmpPath); err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		err = c.SaveUploadedFile(file, fileTmpPath)
+		if err != nil {
 			return
 		}
 		oneTmpInfo := fmt.Sprintf("%s%s%s", fileTmpName, constant.UPLOAD_TMP_ALIAS_DELIMITER, fileAlias)
 		attachment = append(attachment, oneTmpInfo)
 	}
-	data["attachment"] = attachment
-
-	valid := validation.Validation{}
-	valid.MinSize(data["title"], 1, "title")
-	valid.MaxSize(data["title"], 255, "title")
-	valid.MinSize(data["content"], 1, "content")
-	valid.MaxSize(data["content"], 65535, "content")
-	valid.MinSize(data["sender_name"], 1, "sender_name")
-	valid.MaxSize(data["sender_name"], 50, "sender_name")
-	valid.MinSize(data["receiver"], 1, "receiver")
-	valid.MaxSize(data["receiver"], 2000, "receiver")
-	valid.MaxSize(data["receiver_name"], 1000, "receiver_name")
-
-	if valid.HasErrors() {
-		app.MarkErrors(valid.Errors)
-		appG.Response(http.StatusBadRequest, constant.INVALID_PARAMS, nil)
-		return
-	}
-	param := &vo.SendEmailRequest{}
-	err = param.CheckReceiverAndName()
-
-	err = srv.DoPush(data)
-
-	if err != nil {
-		errInfo := []string{err.Error()}
-		appG.Response(http.StatusInternalServerError, constant.INVALID_PARAMS, errInfo)
-		return
-	}
-
-	appG.Response(http.StatusOK, constant.SUCCESS, nil)
+	return
 }

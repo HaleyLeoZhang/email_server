@@ -15,21 +15,14 @@ import (
 	"github.com/HaleyLeoZhang/email_server/constant"
 	"github.com/HaleyLeoZhang/email_server/model/bo"
 	"github.com/HaleyLeoZhang/email_server/model/po"
-	"github.com/HaleyLeoZhang/email_server/pkg/queue_engine"
-	"github.com/HaleyLeoZhang/email_server/pkg/util"
+	"github.com/HaleyLeoZhang/email_server/util"
 	"strings"
-)
-
-const (
-	isOkYes   = 1
-	isOkNo    = 0
-	delimiter = ","
 )
 
 func (s *Service) DoUpdate(id int, data map[string]interface{}) error {
 	whereMap := make(map[string]interface{})
 	whereMap["id"] = id
-	data["is_ok"] = isOkYes
+	data["is_ok"] = constant.BUSINESS_EMAIL_IS_OK_YES
 
 	ctx := context.Background()
 	_, err := s.DB.EmailUpdate(ctx, nil, whereMap, data)
@@ -39,30 +32,13 @@ func (s *Service) DoUpdate(id int, data map[string]interface{}) error {
 	return nil
 }
 
-func (s *Service) DoPush(data map[string]interface{}) error {
-	receiver, receiverName, err := s.getReceiverAndName(
-		data["receiver"].(string),
-		data["receiverName"].(string),
-	)
-	if err != nil {
-		return err
-	}
-
-	smtp := &bo.Smtp{}
-
-	smtp.Subject = data["title"].(string)
-	smtp.Body = data["content"].(string)
-	smtp.SenderName = data["sender_name"].(string)
-	smtp.Receiver = receiver
-	smtp.ReceiverName = receiverName
-	smtp.Attachment = data["attachment"].([]string)
-
+func (s *Service) DoPushMessage(smtp *bo.Smtp) error {
 	payload, err := json.Marshal(smtp)
 	if err != nil {
 		return err
 	}
 
-	q := queue_engine.GetEmailQueue()
+	q := s.GetEmailQueue()
 	err = q.Push(s, payload)
 	if err != nil {
 		return err
@@ -71,8 +47,7 @@ func (s *Service) DoPush(data map[string]interface{}) error {
 }
 
 func (s *Service) DoPull() error {
-
-	q := queue_engine.GetEmailQueue()
+	q := s.GetEmailQueue()
 	err := q.Pull(s, s.doPull)
 	if err != nil {
 		return err
@@ -80,47 +55,44 @@ func (s *Service) DoPull() error {
 	return nil
 }
 
-func (s *Service) doPull(payload []byte) error {
+func (s *Service) doPull(payload []byte) (err error) {
 	smtp := &bo.Smtp{}
 
-	err := json.Unmarshal(payload, smtp)
-	if err != nil {
-		return nil
+	errJson := json.Unmarshal(payload, smtp)
+	if errJson != nil { // 异常数据不存留
+		return
 	}
-
+	err = s.SmtpSend(smtp)
+	if err != nil {
+		return
+	}
+	// 记录发送邮件的日志
 	email := &po.Email{}
 	email.Title = smtp.Subject
 	email.Content = smtp.Body
 	email.SenderName = smtp.SenderName
-	email.Receiver = strings.Join(smtp.Receiver, ",")
-	email.ReceiverName = strings.Join(smtp.ReceiverName, ",")
+	email.Receiver = strings.Join(smtp.Receiver, constant.BUSINESS_EMAIL_DELIMITER)
+	email.ReceiverName = strings.Join(smtp.ReceiverName, constant.BUSINESS_EMAIL_DELIMITER)
 	email.Attachment = strings.Join(smtp.Attachment, constant.UPLOAD_MULIT_FILE)
-	email.Remark = strings.Join(smtp.Remark, ",")
+	email.Remark = strings.Join(smtp.Remark, constant.BUSINESS_EMAIL_DELIMITER)
 
 	ctx := context.Background()
-	if err != nil {
-		email.IsOk = isOkNo
-		_ = s.DB.EmailInsert(ctx, nil, email)
-		return err
-	}
 
 	// 删除用过的文件
 	s.SmtpDeleteAttachmentList(smtp)
 
-	email.IsOk = isOkYes
+	email.IsOk = constant.BUSINESS_EMAIL_IS_OK_YES
 	err = s.DB.EmailInsert(ctx, nil, email)
 	if err != nil {
-		return err
+		return
 	}
 
-	// fmt.Printf("发送邮件成功: %v \n", payload)
-
-	return nil
+	return
 }
 
 func (s *Service) getReceiverAndName(receiver string, receiverName string) ([]string, []string, error) {
 
-	receiverArr := strings.Split(receiver, delimiter)
+	receiverArr := strings.Split(receiver, constant.BUSINESS_EMAIL_DELIMITER)
 
 	for _, email := range receiverArr {
 		if false == util.CheckEmail(email) {
@@ -132,7 +104,7 @@ func (s *Service) getReceiverAndName(receiver string, receiverName string) ([]st
 	if "" == receiverName {
 		receiverNameArr = []string{}
 	} else {
-		receiverNameArr = strings.Split(receiverName, delimiter)
+		receiverNameArr = strings.Split(receiverName, constant.BUSINESS_EMAIL_DELIMITER)
 		fmt.Printf("%v  %v \n", receiverArr, receiverNameArr)
 		if len(receiverArr) != len(receiverNameArr) {
 			return nil, nil, errors.New("receiver 与 receiverName 数量不一致")

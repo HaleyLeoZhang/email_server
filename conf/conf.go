@@ -28,7 +28,7 @@ type Config struct {
 	DB          *db.Config         `yaml:"db" json:"db"`
 	Redis       *xredis.Config     `yaml:"redis" json:"redis"`
 	Log         *xlog.Config       `yaml:"log" json:"log"`
-	RabbitMq    *xrabbitmq.Config  `yaml:"rabbit_mq" json:"rabbit_mq"`
+	RabbitMq    *xrabbitmq.Config  `yaml:"rabbitMq" json:"rabbit_mq"`
 	Email       *bo.ConfigEmail    `yaml:"email" json:"email"`
 }
 
