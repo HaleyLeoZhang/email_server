@@ -42,7 +42,7 @@ redis:-----------------------------当前版本暂不需要，不用填写------
 log:
   name: email_server
   stdout: true # true 直接输出到命令行 false 不输出信息到命令行
-  dir: "/tmp/email_server/working.log" # 设定日志的存放位置，如果为空字符串，则表示不存储
+  dir: "/tmp/email_server/working.log" # 设定日志的存放位置，如果为空字符串，则表示不存储。注：不存储时 stdout 参数才会生效
 
 email:
   driver: "amqp" # 队列驱动枚举 amqp 、kafka
