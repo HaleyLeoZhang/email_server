@@ -25,11 +25,11 @@ db:
   maxOpenConns: 30
   maxLeftTime: 30s
 
-redis:
+redis:-----------------------------当前版本暂不需要，不用填写---------------
   name: email_server
   proto: tcp
   addr: 192.168.56.110:6379
-  auth: zhangli
+  auth: ""
   dialTimeout: 100ms
   readTimeout: 200ms
   writeTimeout: 200ms
