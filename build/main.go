@@ -18,6 +18,7 @@ func main() {
 	}
 
 	oneService := service.New()
+	oneService.Start()
 	xlog.Init(conf.Conf.Log)
 
 	app := bootstrap.New()
@@ -29,7 +30,7 @@ func main() {
 		//}
 		gin := xgin.New(conf.Conf.Gin)
 		go httpserver.Run(conf.Conf.HttpServer, http.Init(gin, oneService)) // 已配置 recovery 不用处理 panic
-		go oneService.Start()
+
 		return
 	}).Stop(func() {
 		oneService.Close()

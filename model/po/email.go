@@ -14,5 +14,5 @@ type Email struct {
 
 //数据表---必需
 func (e *Email) TableName() string {
-	return "vo"
+	return "email"
 }

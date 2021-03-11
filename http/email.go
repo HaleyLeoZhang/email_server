@@ -71,7 +71,7 @@ func EmailSend(c *gin.Context) {
 	files := form.File["attachment[]"]
 	smtp.Attachment, err = emailGetFiles(c, files)
 
-	err = srv.DoPushMessage(smtp)
+	err = srv.DoMessagePush(smtp)
 
 	if err != nil {
 		xGin.Response(err, nil)

@@ -10,12 +10,9 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"errors"
-	"fmt"
 	"github.com/HaleyLeoZhang/email_server/constant"
 	"github.com/HaleyLeoZhang/email_server/model/bo"
 	"github.com/HaleyLeoZhang/email_server/model/po"
-	"github.com/HaleyLeoZhang/email_server/util"
 	"strings"
 )
 
@@ -32,7 +29,7 @@ func (s *Service) DoUpdate(id int, data map[string]interface{}) error {
 	return nil
 }
 
-func (s *Service) DoPushMessage(smtp *bo.Smtp) error {
+func (s *Service) DoMessagePush(smtp *bo.Smtp) error {
 	payload, err := json.Marshal(smtp)
 	if err != nil {
 		return err
@@ -46,7 +43,7 @@ func (s *Service) DoPushMessage(smtp *bo.Smtp) error {
 	return nil
 }
 
-func (s *Service) DoPull() error {
+func (s *Service) DoMessagePull() error {
 	q := s.GetEmailQueue()
 	err := q.Pull(s, s.doPull)
 	if err != nil {
@@ -88,28 +85,4 @@ func (s *Service) doPull(payload []byte) (err error) {
 	}
 
 	return
-}
-
-func (s *Service) getReceiverAndName(receiver string, receiverName string) ([]string, []string, error) {
-
-	receiverArr := strings.Split(receiver, constant.BUSINESS_EMAIL_DELIMITER)
-
-	for _, email := range receiverArr {
-		if false == util.CheckEmail(email) {
-			return nil, nil, errors.New("receiver 含格式不正确的邮箱地址")
-		}
-	}
-
-	var receiverNameArr []string
-	if "" == receiverName {
-		receiverNameArr = []string{}
-	} else {
-		receiverNameArr = strings.Split(receiverName, constant.BUSINESS_EMAIL_DELIMITER)
-		fmt.Printf("%v  %v \n", receiverArr, receiverNameArr)
-		if len(receiverArr) != len(receiverNameArr) {
-			return nil, nil, errors.New("receiver 与 receiverName 数量不一致")
-		}
-	}
-
-	return receiverArr, receiverNameArr, nil
 }

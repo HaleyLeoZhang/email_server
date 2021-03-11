@@ -62,5 +62,5 @@ rabbitMq:
   name: "email_server_local"
   host: "192.168.56.110"
   port: 5672
-  user: "guest"
+  username: "guest"
   password: "guest"

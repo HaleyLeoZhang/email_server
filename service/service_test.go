@@ -36,7 +36,7 @@ func TestService_DoPushMessage(t *testing.T) {
 	smtp.SenderName = "云天河官方邮件"
 	smtp.ReceiverName = []string{"沐临风测试专用号"}
 	smtp.Receiver = []string{"haleyleozhang@sohu.com"}
-	err := svr.DoPushMessage(smtp)
+	err := svr.DoMessagePush(smtp)
 	if err != nil {
 		t.Fatalf("Err(%+v)", err)
 	}
