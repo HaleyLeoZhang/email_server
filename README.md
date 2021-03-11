@@ -26,11 +26,6 @@
     - [x] 邮件发送记录
 * [ ] 服务 recover 与异常监控
 
-## 工具
-
-[json转go结构体](https://www.sojson.com/json/json2go.html)  
-请注意json中的数据类型  
-
 ## 常用功能
 基础工具命令都已集成到 [Makefile](Makefile)
 
