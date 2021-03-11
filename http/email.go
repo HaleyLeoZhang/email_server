@@ -28,6 +28,11 @@ import (
  * @apiParam {string} receiver_name 收件人昵称,可不填,多个以英文逗号隔开
  * @apiParam {file}   attachment[] 多个附件请使用相同变量名.请使用 form-data 进行传输
  *
+ * @apiHeaderExample {json} Header-Example:
+ * {
+ *     "Content-Type": "multipart/form-data"
+ * }
+ *
  * @apiDescription  发送邮件
  *
  * @apiVersion 1.0.0
@@ -39,11 +44,9 @@ import (
  * }
  * @apiErrorExample Error-Response:
  * {
- *     "code": 1001,
- *     "message": "请求参数错误",
- *     "data": [
- *         "receiver 含格式不正确的邮箱地址"
- *     ]
+ *     "code": 400,
+ *     "message": "Param is invalid",
+ *     "data": null
  * }
  */
 func EmailSend(c *gin.Context) {

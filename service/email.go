@@ -16,19 +16,6 @@ import (
 	"strings"
 )
 
-func (s *Service) DoUpdate(id int, data map[string]interface{}) error {
-	whereMap := make(map[string]interface{})
-	whereMap["id"] = id
-	data["is_ok"] = constant.BUSINESS_EMAIL_IS_OK_YES
-
-	ctx := context.Background()
-	_, err := s.DB.EmailUpdate(ctx, nil, whereMap, data)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *Service) DoMessagePush(smtp *bo.Smtp) error {
 	payload, err := json.Marshal(smtp)
 	if err != nil {
@@ -54,15 +41,13 @@ func (s *Service) DoMessagePull() error {
 
 func (s *Service) doPull(payload []byte) (err error) {
 	smtp := &bo.Smtp{}
+	ctx := context.Background()
 
 	errJson := json.Unmarshal(payload, smtp)
 	if errJson != nil { // 异常数据不存留
 		return
 	}
 	err = s.SmtpSend(smtp)
-	if err != nil {
-		return
-	}
 	// 记录发送邮件的日志
 	email := &po.Email{}
 	email.Title = smtp.Subject
@@ -72,13 +57,16 @@ func (s *Service) doPull(payload []byte) (err error) {
 	email.ReceiverName = strings.Join(smtp.ReceiverName, constant.BUSINESS_EMAIL_DELIMITER)
 	email.Attachment = strings.Join(smtp.Attachment, constant.UPLOAD_MULIT_FILE)
 	email.Remark = strings.Join(smtp.Remark, constant.BUSINESS_EMAIL_DELIMITER)
-
-	ctx := context.Background()
+	email.IsOk = constant.BUSINESS_EMAIL_IS_OK_YES
+	if err != nil {
+		email.IsOk = constant.BUSINESS_EMAIL_IS_OK_NO
+		_ = s.DB.EmailInsert(ctx, nil, email)
+		return
+	}
 
 	// 删除用过的文件
 	s.SmtpDeleteAttachmentList(smtp)
 
-	email.IsOk = constant.BUSINESS_EMAIL_IS_OK_YES
 	err = s.DB.EmailInsert(ctx, nil, email)
 	if err != nil {
 		return
