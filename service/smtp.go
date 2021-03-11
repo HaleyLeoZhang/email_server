@@ -14,41 +14,42 @@ import (
 	"github.com/HaleyLeoZhang/email_server/conf"
 	"github.com/HaleyLeoZhang/email_server/constant"
 	"github.com/HaleyLeoZhang/email_server/model/bo"
+	"github.com/HaleyLeoZhang/email_server/model/vo"
 	"github.com/HaleyLeoZhang/email_server/pkg/file"
 	"gopkg.in/gomail.v2"
 	"strings"
 )
 
 
-func (s *Service) SmtpSend(smtp *bo.Smtp) error {
-
+func (s *Service) SmtpSend(param *vo.SendEmailRequest) error {
 	// 内容配置
 	m := gomail.NewMessage()
-	m.SetAddressHeader("From",  conf.Conf.Email.Smtp.FromAddr, smtp.SenderName)
+	m.SetAddressHeader("From",  conf.Conf.Email.Smtp.FromAddr, param.SenderName)
 
 	noReceiver := false
-	if len(smtp.ReceiverName) == 0 {
+	if len(param.ReceiverName) == 0 {
 		noReceiver = true
 	}
 
-	formatEmails := []string{}
-	for key, _ := range smtp.Receiver {
+	lenReceiver := len(param.Receiver)
+	formatEmails := make([]string, 0, lenReceiver)
+	for key, _ := range param.Receiver {
 		if noReceiver {
-			formatEmails = append(formatEmails, m.FormatAddress(smtp.Receiver[key], ""))
+			formatEmails = append(formatEmails, m.FormatAddress(param.Receiver[key], ""))
 		} else {
-			formatEmails = append(formatEmails, m.FormatAddress(smtp.Receiver[key], smtp.ReceiverName[key]))
+			formatEmails = append(formatEmails, m.FormatAddress(param.Receiver[key], param.ReceiverName[key]))
 		}
 	}
 	m.SetHeader("To", formatEmails...)
-	m.SetHeader("Subject", smtp.Subject)
-	m.SetBody("text/html", smtp.Body)
+	m.SetHeader("Subject", param.Subject)
+	m.SetBody("text/html", param.Body)
 
-	fileList := s.SmtpGetAttachmentList(smtp)
+	fileList := s.SmtpGetAttachmentList(param.Smtp)
 	for filePath, fileAlias := range fileList {
 		if constant.UPLOAD_FILE_EXISTS == s.UploadCheckFile(filePath) {
 			m.Attach(filePath, gomail.Rename(fileAlias))
 		} else {
-			smtp.Remark = append(smtp.Remark, "Not Found: "+fileAlias)
+			param.Remark = append(param.Remark, "Not Found: "+fileAlias)
 		}
 	}
 

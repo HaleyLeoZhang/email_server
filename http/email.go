@@ -1,4 +1,4 @@
-package email
+package http
 
 // ----------------------------------------------------------------------
 // 邮件服务
@@ -9,7 +9,8 @@ package email
 
 import (
 	"github.com/HaleyLeoZhang/email_server/constant"
-	service2 "github.com/HaleyLeoZhang/email_server/service"
+	"github.com/HaleyLeoZhang/email_server/model/vo"
+	"github.com/HaleyLeoZhang/go-component/driver/xgin"
 	"net/http"
 
 	"github.com/astaxie/beego/validation"
@@ -18,7 +19,6 @@ import (
 
 	"fmt"
 	"github.com/HaleyLeoZhang/email_server/pkg/app"
-	"github.com/HaleyLeoZhang/email_server/pkg/e"
 )
 
 /**
@@ -51,8 +51,8 @@ import (
  *     ]
  * }
  */
-func Send(c *gin.Context) {
-	appG := app.Gin{C: c}
+func EmailSend(c *gin.Context) {
+	xGin := xgin.NewGin(c)
 
 	data := make(map[string]interface{})
 	data["title"] = com.StrTo(c.PostForm("title")).String()
@@ -61,18 +61,24 @@ func Send(c *gin.Context) {
 	data["receiver"] = com.StrTo(c.PostForm("receiver")).String()
 	data["receiver_name"] = com.StrTo(c.PostForm("receiver_name")).String()
 
+	// 获取基础信息
+	param := &vo.ComicListParam{}
+	err := c.Bind(param)
+	if err != nil {
+		err = &xgin.BusinessError{Code: xgin.HTTP_RESPONSE_CODE_PARAM_INVALID, Message: "Param is invalid"}
+		xGin.Response(err, nil)
+		return
+	}
 	// Multipart form --- TODO 2020-3-4 23:51:21
 	form, err := c.MultipartForm()
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
+		xGin.Response(err, nil)
 		return
 	}
 	files := form.File["attachment[]"]
-
-	upload := &service2.Upload{}
 	attachment := make([]string, 0)
 	for _, file := range files {
-		fileTmpPath, fileTmpName := upload.CreateTmpFile()
+		fileTmpPath, fileTmpName := srv.UploadCreateTmpFile()
 		fileAlias := file.Filename
 		if err := c.SaveUploadedFile(file, fileTmpPath); err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
@@ -96,18 +102,19 @@ func Send(c *gin.Context) {
 
 	if valid.HasErrors() {
 		app.MarkErrors(valid.Errors)
-		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
+		appG.Response(http.StatusBadRequest, constant.INVALID_PARAMS, nil)
 		return
 	}
+	param := &vo.SendEmailRequest{}
+	err = param.CheckReceiverAndName()
 
-	service := service2.Email{}
-	err = service.DoPush(data)
+	err = srv.DoPush(data)
 
 	if err != nil {
 		errInfo := []string{err.Error()}
-		appG.Response(http.StatusInternalServerError, e.INVALID_PARAMS, errInfo)
+		appG.Response(http.StatusInternalServerError, constant.INVALID_PARAMS, errInfo)
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, nil)
+	appG.Response(http.StatusOK, constant.SUCCESS, nil)
 }

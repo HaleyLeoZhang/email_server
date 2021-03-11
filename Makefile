@@ -1,40 +1,37 @@
-.PHONY: build clean tool lint help
+all: debug
 
-all: build
+debug:
+	@clear
+	@echo "App debug is loading"
+	@go run ./build/main.go -conf=./build/app.yaml
 
-build:
-	@echo "App is creating. Please wait ..."
-	@go build -o email_server -v . 
-	@echo "App is created"
+ini:
 	@echo "Copy conf/app.ini To /usr/local/etc/mail.ops.hlzblog.top.ini ---DOING"
 	@cp conf/app.ini /usr/local/etc/mail.ops.hlzblog.top.ini
 	@echo "Copy ---DONE"
 
-ini:
-	@cp conf/app.ini /usr/local/etc/mail.ops.hlzblog.top.ini
+build:
+	@rm -rf email_server
+	@echo "App is creating. Please wait ..."
+	@go build -o email_server -v .
+	@echo "App is created"
+
+run:
+	@./email_server -conf=./build/app.yaml
+
+
+deploy:
+	@make ini
+	@make build
+	@make run
 
 tool:
-	go vet ./...; true
-	gofmt -w .
+	@go vet ./...; true
+	@gofmt -w .
 
-lint:
-	golint ./...
-
-clean:
-	rm -rf email_server
-	go clean -i .
-
-test:
-	@echo "Test --- START"
-	@go test -v service/email_service/*.go
-	@go test -v pkg/queue/*.go
-	@go test -v pkg/util/*.go
-	@go test -v pkg/file/*.go
-	@echo "Test --- END"
-
-
-help:
-	@echo "make: compile packages and dependencies"
-	@echo "make tool: run specified go tool"
-	@echo "make lint: golint ./..."
-	@echo "make clean: remove object files and cached files"
+json:
+    # 以下会为 model/ 所有二级目录下所有结构体生成 easyjson 文件
+	@echo "Creating easyjson file for model/*/*.go"
+	@rm -rf model/*/*_easyjson.go
+	@easyjson -all model/*/*.go # 格式化 json ，需要 https://github.com/mailru/easyjson
+	@echo "Created model/*/*.go easyjson file Success"

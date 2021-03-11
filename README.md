@@ -36,7 +36,7 @@
 > 生成配置文件
 
 ~~~bash
-cp conf/app.ini.example conf/app.ini  
+cp build/app.ini.example build/app.ini  
 ~~~
 
 设置好配置文件后,生成配置文件到默认目录下
@@ -45,30 +45,23 @@ cp conf/app.ini.example conf/app.ini
 make ini
 ~~~
 
-
-rabbitMQ 请配置 `exchange` 名为 `email_sender`  
-rabbitMQ 请配置 `queue` 名为 `email_sender`  
-
 数据库、表设置  
 ~~~sql
-CREATE DATABASE common_service charset = utf8mb4;
-
-DROP TABLE IF EXISTS `email`;
 CREATE TABLE `email` (
-`id` INT ( 1 ) UNSIGNED NOT NULL AUTO_INCREMENT,
-`title` VARCHAR ( 255 ) NOT NULL DEFAULT '' COMMENT '邮件标题',
-`content` text NOT NULL COMMENT '邮件内容',
-`sender_name` VARCHAR ( 50 ) NOT NULL DEFAULT '' COMMENT '发件者姓名.发起方自定义',
-`receiver` text NOT NULL COMMENT '接收者邮箱.多个以逗号隔开',
-`receiver_name` text NOT NULL COMMENT '接收者姓名.多个以逗号隔开',
-`attachment` VARCHAR ( 1000 ) NOT NULL DEFAULT '' COMMENT '附件信息',
-`remark` VARCHAR ( 100 ) NOT NULL DEFAULT '' COMMENT '备注信息',
-`is_ok` TINYINT ( 1 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '枚举值 0:发送成功,1:发送失败',
-`is_deleted` TINYINT ( 1 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '枚举值 0:正常,1:删除',
-`updated_at` datetime NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT '更新时间',
-`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-PRIMARY KEY ( `id` ) USING BTREE,
-KEY `idx-created_at` ( `created_at` ) USING BTREE 
+	`id` INT ( 1 ) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`title` VARCHAR ( 255 ) NOT NULL DEFAULT '' COMMENT '邮件标题',
+	`content` text NOT NULL COMMENT '邮件内容',
+	`sender_name` VARCHAR ( 50 ) NOT NULL DEFAULT '' COMMENT '发件者姓名.发起方自定义',
+	`receiver` text NOT NULL COMMENT '接收者邮箱.多个以逗号隔开',
+	`receiver_name` text NOT NULL COMMENT '接收者姓名.多个以逗号隔开',
+	`attachment` VARCHAR ( 1000 ) NOT NULL DEFAULT '' COMMENT '附件信息',
+	`remark` VARCHAR ( 100 ) NOT NULL DEFAULT '' COMMENT '备注信息',
+	`is_ok` TINYINT ( 1 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '枚举值 0:发送成功,1:发送失败',
+	`is_deleted` TINYINT ( 1 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '枚举值 0:正常,1:删除',
+	`created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+	PRIMARY KEY ( `id` ) USING BTREE,
+	KEY `idx-created_at` ( `created_at` ) USING BTREE 
 ) ENGINE = INNODB DEFAULT CHARSET = utf8mb4 ROW_FORMAT = COMPACT COMMENT = '邮件服务';
 ~~~
 
@@ -101,7 +94,7 @@ t.Error 为打印错误信息,并当前test case会被跳过
 ##### 示例运行
 
 ~~~bash
-make build
+make deploy
 ./email_server
 ~~~
 

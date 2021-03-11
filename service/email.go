@@ -15,7 +15,6 @@ import (
 	"github.com/HaleyLeoZhang/email_server/constant"
 	"github.com/HaleyLeoZhang/email_server/model/bo"
 	"github.com/HaleyLeoZhang/email_server/model/po"
-	"github.com/HaleyLeoZhang/email_server/pkg/e"
 	"github.com/HaleyLeoZhang/email_server/pkg/queue_engine"
 	"github.com/HaleyLeoZhang/email_server/pkg/util"
 	"strings"
@@ -41,7 +40,7 @@ func (s *Service) DoUpdate(id int, data map[string]interface{}) error {
 }
 
 func (s *Service) DoPush(data map[string]interface{}) error {
-	receiver, receiverName, err := e.getReceiverAndName(
+	receiver, receiverName, err := s.getReceiverAndName(
 		data["receiver"].(string),
 		data["receiverName"].(string),
 	)
@@ -88,7 +87,6 @@ func (s *Service) doPull(payload []byte) error {
 	if err != nil {
 		return nil
 	}
-	err = s.SmtpSend(smtp)
 
 	email := &po.Email{}
 	email.Title = smtp.Subject

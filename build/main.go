@@ -17,7 +17,7 @@ func main() {
 		panic(err)
 	}
 
-	oneService := service.New(conf.Conf)
+	oneService := service.New()
 	xlog.Init(conf.Conf.Log)
 
 	app := bootstrap.New()

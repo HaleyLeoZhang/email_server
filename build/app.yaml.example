@@ -64,6 +64,3 @@ rabbitmq:
   port: 5672
   user: "guest"
   password: "guest"
-  emailExchange: "amq.topic" // 邮件服务的交换机名
-  emailQueue: "email_server.sender" // 邮件服务的消费队列名
-  emailRoutineKey: "email_server_sender" // 邮件服务的路由键名

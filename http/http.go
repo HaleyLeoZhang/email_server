@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/HaleyLeoZhang/email_server/http/email"
 	"github.com/HaleyLeoZhang/email_server/service"
 	"github.com/gin-gonic/gin"
 )
@@ -13,7 +12,7 @@ func Init(e *gin.Engine, srvInjection *service.Service) *gin.Engine {
 	//e.Use() // 暂无中间件需要被设置
 	{
 		apiEmail := e.Group("/api/email")
-		apiEmail.POST("send", email.Send)
+		apiEmail.POST("send", EmailSend)
 	}
 
 	return e
