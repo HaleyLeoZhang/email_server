@@ -41,15 +41,15 @@ redis:-----------------------------当前版本暂不需要，不用填写------
 
 log:
   name: email_server
-  stdout: true
-  dir: "/tmp/email_server"
+  stdout: true # true 直接输出 false 存储到指定文件中
+  dir: "/tmp/email_server/working.log" # 设定日志的存放位置
 
 email:
   driver: "amqp" # 队列驱动枚举 amqp 、kafka
   consumer: 3 # 并发消费数量
   batchNumber: 3 # 每次拉取的消息量
   uploadFile:
-    dir: "/tmp/email_server/upload"
+    dir: "/tmp/email_server/upload" # 上传附件的暂存目录
   smtp:
     host: "smtp.qq.com"
     port: 587
