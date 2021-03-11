@@ -29,8 +29,7 @@ func main() {
 		//	app.NotifyError <- err
 		//}
 		gin := xgin.New(conf.Conf.Gin)
-		go httpserver.Run(conf.Conf.HttpServer, http.Init(gin, oneService)) // 已配置 recovery 不用处理 panic
-
+		go httpserver.Run(conf.Conf.HttpServer, http.Init(gin, oneService))
 		return
 	}).Stop(func() {
 		oneService.Close()
