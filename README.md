@@ -1,5 +1,52 @@
-# 序言
+## 序言
 本次主要使用 `golang` 重写 `email` 模块    
+
+
+## 使用
+
+#### 发送邮件
+
+- API `127.0.0.1:8100/api/email/send`  
+- 方式 `POST`
+- 入参
+    - `title` 邮件名
+    - `content` 待发送正文,支持html
+    - `sender_name` string 发件人昵称
+    - `receiver` string 接收者邮箱.多个以逗号隔开
+    - `receiver_name` string 接收者邮箱昵称,可以不填,多个以逗号隔开
+    - `attachment[]` file 多个附件请使用相同变量名.请使用 form-data 进行传输
+
+###### 示例:正常请求
+
+~~~bash
+{
+    "code": 200,
+    "message": "success",
+    "data": null
+}
+~~~
+
+###### 示例:异常请求
+
+~~~bash
+{
+    "code": 400,
+    "message": "Param is invalid",
+    "data": null
+}
+~~~
+
+###### 请求邮件通知服务
+
+![](reademe/img/001.png)  
+`图 001`  
+
+###### 接收邮件
+
+![](reademe/img/002.png)  
+`图 002`  
+
+
 
 ###### 注意
 文件大小限制请在服务器层面完成,如 `nginx`  
@@ -77,52 +124,7 @@ make tool
 
 ~~~bash
 make deploy
-./email_server
 ~~~
-
-## 使用
-
-#### 发送邮件
-
-- API `127.0.0.1:8100/api/email/send`  
-- 方式 `POST`
-- 入参
-    - `title` 邮件名
-    - `content` 待发送正文,支持html
-    - `sender_name` string 发件人昵称
-    - `receiver` string 接收者邮箱.多个以逗号隔开
-    - `receiver_name` string 接收者邮箱昵称,可以不填,多个以逗号隔开
-    - `attachment[]` file 多个附件请使用相同变量名.请使用 form-data 进行传输
-
-###### 示例:正常请求
-
-~~~bash
-{
-    "code": 200,
-    "message": "success",
-    "data": null
-}
-~~~
-
-###### 示例:异常请求
-
-~~~bash
-{
-    "code": 400,
-    "message": "Param is invalid",
-    "data": null
-}
-~~~
-
-###### 请求邮件通知服务
-
-![](reademe/img/001.png)  
-`图 001`  
-
-###### 接收邮件
-
-![](reademe/img/002.png)  
-`图 002`  
 
 
 #### supervisor 配置
