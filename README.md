@@ -56,7 +56,7 @@ CREATE TABLE `email` (
 	`receiver_name` text NOT NULL COMMENT '接收者姓名.多个以逗号隔开',
 	`attachment` VARCHAR ( 1000 ) NOT NULL DEFAULT '' COMMENT '附件信息',
 	`remark` VARCHAR ( 100 ) NOT NULL DEFAULT '' COMMENT '备注信息',
-	`is_ok` TINYINT ( 1 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '枚举值 0:发送成功,1:发送失败',
+	`is_ok` TINYINT ( 1 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '枚举值 0:发送失败 1:发送成功',
 	`is_deleted` TINYINT ( 1 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '枚举值 0:正常,1:删除',
 	`created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 	`updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
