@@ -43,6 +43,10 @@ make ini
 
 数据库、表设置  
 ~~~sql
+CREATE DATABASE common_service charset = utf8mb4;
+use common_service;
+
+DROP TABLE IF EXISTS `email`;
 CREATE TABLE `email` (
 	`id` INT ( 1 ) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`title` VARCHAR ( 255 ) NOT NULL DEFAULT '' COMMENT '邮件标题',
