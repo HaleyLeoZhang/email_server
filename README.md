@@ -123,3 +123,26 @@ make deploy
 
 ![](reademe/img/002.png)  
 `图 002`  
+
+
+#### supervisor 配置
+
+你可以在含有 supervisor 的docker中跑，如下
+
+~~~~bash
+[program:email_server]
+
+command     = /data/www/ops/mail.ops.hlzblog.top/email_server -conf=/data/www/ops/mail.ops.hlzblog.top/build/app.yaml
+autorestart = true
+user        = www-data
+
+redirect_stderr         = true
+stdout_logfile_maxbytes = 10MB
+stdout_logfile_backups  = 1
+stdout_logfile          = /data/logs/supervisor/email_server.log
+
+numprocs     = 1
+process_name =%(program_name)s_%(process_num)02d;
+~~~
+
+
