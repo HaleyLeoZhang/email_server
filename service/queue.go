@@ -29,7 +29,7 @@ func (s *Service) GetEmailQueue() Queue {
 	case "kafka":
 		return &QueueEngineKafka{}
 	default:
-		panic("vo 队列驱动配置错误")
+		panic("email 队列驱动配置选择错误")
 	}
 }
 
