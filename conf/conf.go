@@ -3,6 +3,7 @@ package conf
 import (
 	"flag"
 	"github.com/HaleyLeoZhang/email_server/model/bo"
+	"github.com/HaleyLeoZhang/go-component/driver/xkafka"
 	"github.com/HaleyLeoZhang/go-component/driver/xrabbitmq"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -28,8 +29,15 @@ type Config struct {
 	DB          *db.Config         `yaml:"db" json:"db"`
 	Redis       *xredis.Config     `yaml:"redis" json:"redis"`
 	Log         *xlog.Config       `yaml:"log" json:"log"`
-	RabbitMq    *xrabbitmq.Config  `yaml:"rabbitMq" json:"rabbit_mq"`
+	RabbitMq    *xrabbitmq.Config  `yaml:"rabbitMq" json:"rabbitMq"`
+	Kafka       *xkafka.Config     `yaml:"kafka" json:"kafka"`
+	KafkaTopic  *KafkaTopicOne     `yaml:"kafkaTopic" json:"kafkaTopic"` // 如果使用kafka,请配置Topic名称到这个字段
 	Email       *bo.ConfigEmail    `yaml:"email" json:"email"`
+}
+
+type KafkaTopicOne struct {
+	Group     string `yaml:"group"`     // 消费者组名称
+	TopicList []string `yaml:"topicList"` // Topic 列表
 }
 
 func init() {

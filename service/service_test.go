@@ -4,10 +4,12 @@ import (
 	"context"
 	"flag"
 	"github.com/HaleyLeoZhang/email_server/conf"
+	"github.com/HaleyLeoZhang/email_server/constant"
 	"github.com/HaleyLeoZhang/email_server/model/bo"
 	"github.com/HaleyLeoZhang/go-component/driver/xlog"
 	"os"
 	"testing"
+	"time"
 )
 
 var (
@@ -39,5 +41,21 @@ func TestService_DoPushMessage(t *testing.T) {
 	err := svr.DoMessagePush(smtp)
 	if err != nil {
 		t.Fatalf("Err(%+v)", err)
+	}
+	if conf.Conf.Email.Driver == constant.DRIVER_NAME_KAFKA{
+		// 目前使用的异步生成者，需要模拟等待
+		<- time.After(2 * time.Second)
+	}
+}
+
+
+func TestService_DoMessagePull(t *testing.T) {
+	err := svr.DoMessagePull()
+	if err != nil {
+		t.Fatalf("Err(%+v)", err)
+	}
+	if conf.Conf.Email.Driver == constant.DRIVER_NAME_KAFKA{
+		// 进程需要挂起
+		<- time.After(20 * time.Second)
 	}
 }

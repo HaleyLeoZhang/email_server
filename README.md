@@ -62,7 +62,8 @@
 * 接收发邮件的 HTTP 请求
     - 异步队列
         - [x] RabbitMQ
-        - [ ] Kafka
+        - [x] Kafka
+            - 请自行创建 Topic 然后配置 `kafkaTopic` 这个配置项
         - [x] 整合为简单工厂
     - 附件
         - [x] 多附件上传
