@@ -96,7 +96,7 @@ use common_service;
 
 DROP TABLE IF EXISTS `email`;
 CREATE TABLE `email` (
-	`id` INT ( 1 ) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`id` BIGINT ( 1 ) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`title` VARCHAR ( 255 ) NOT NULL DEFAULT '' COMMENT '邮件标题',
 	`content` text NOT NULL COMMENT '邮件内容',
 	`sender_name` VARCHAR ( 50 ) NOT NULL DEFAULT '' COMMENT '发件者姓名.发起方自定义',
