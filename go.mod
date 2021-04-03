@@ -9,7 +9,6 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/jinzhu/gorm v1.9.16
 	github.com/mailru/easyjson v0.7.7
-	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df

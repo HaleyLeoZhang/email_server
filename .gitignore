@@ -1,5 +1,6 @@
 .idea/
 .DS_Store
-email_server
 go.sum
+app_api
+app_job
 

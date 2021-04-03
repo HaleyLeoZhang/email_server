@@ -41,11 +41,18 @@
 ![](reademe/img/001.png)  
 `图 001`  
 
-###### 接收邮件
+###### 处理邮件发送
 
 ![](reademe/img/002.png)  
 `图 002`  
 
+#### 流程概述
+
+![](reademe/doc/doc.svg)  
+
+###### 为什么拆分为 API 与 JOB
+`API` 部分主要是为了接收外部的发送请求保证服务的可用性  
+`JOB` 部分是为了让 `pop3` 密码要更换时，可以先停止服务防止邮件发送失败  
 
 
 ###### 注意
@@ -80,14 +87,18 @@
 > 生成配置文件
 
 ~~~bash
-cp build/app.ini.example build/app.ini  
+cp api/build/app.example.yaml api/build/app.yaml
+cp job/build/app.example.yaml job/build/app.yaml
 ~~~
 
-设置好配置文件后,生成配置文件到默认目录下
+如果你是在 `Mac` 或者 `Linux` 环境下可以使用 `make` 命令拉快速生成  
 
 ~~~bash
-make ini
+make iniapi && make inijob 
 ~~~
+
+设置好配置文件后,生成配置文件到默认目录下  
+
 
 数据库、表设置  
 ~~~sql
@@ -113,6 +124,10 @@ CREATE TABLE `email` (
 ) ENGINE = INNODB DEFAULT CHARSET = utf8mb4 ROW_FORMAT = COMPACT COMMENT = '邮件服务';
 ~~~
 
+设计这个表是为了某天发现有些邮件没发送成功  
+可以通过这里兜底获取发送请求以重新发送  
+
+
 > 更多
 
 ###### 格式化代码
@@ -124,27 +139,44 @@ make tool
 ##### 示例运行
 
 ~~~bash
-make deploy
+# 编译并运行 API
+make deployapi
+# 编译并运行 JOB
+make deployjob
 ~~~
 
 
 #### supervisor 配置
 
-你可以在含有 supervisor 的docker中跑，如下
+你可以在含有 `supervisor` 的docker中跑，如下
 
 ~~~~bash
-[program:email_server]
+[program:email_server_api]
 
-command     = /data/www/ops/mail.ops.hlzblog.top/email_server -conf=/data/www/ops/mail.ops.hlzblog.top/build/app.yaml
+command     = /data/www/ops/mail.ops.hlzblog.top/app_api -conf=/data/www/ops/mail.ops.hlzblog.top/api/build/app.yaml
 autorestart = true
 user        = www-data
 
 redirect_stderr         = true
 stdout_logfile_maxbytes = 10MB
 stdout_logfile_backups  = 1
-stdout_logfile          = /data/logs/supervisor/email_server.log
+stdout_logfile          = /data/logs/supervisor/email_server_api.log
 
 numprocs     = 1
+process_name =%(program_name)s_%(process_num)02d;
+
+[program:email_server_job]
+
+command     = /data/www/ops/mail.ops.hlzblog.top/app_job -conf=/data/www/ops/mail.ops.hlzblog.top/job/build/app.yaml
+autorestart = true
+user        = www-data
+
+redirect_stderr         = true
+stdout_logfile_maxbytes = 10MB
+stdout_logfile_backups  = 1
+stdout_logfile          = /data/logs/supervisor/email_server_job.log
+
+numprocs     = 1 # 如果是Kafka部署，实例个数请 >= topic分区数
 process_name =%(program_name)s_%(process_num)02d;
 ~~~
 

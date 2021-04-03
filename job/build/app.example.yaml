@@ -1,0 +1,138 @@
+serviceName: email_server_job
+
+httpServer:
+  name: email_server_job
+  ip: 0.0.0.0
+  port: 8110 # API 与 JOB 如果在同一机器上，只需要把这个设置不同即可
+  pprof: false
+  readTimeout: 5s
+  writeTimeout: 5s
+  maxHeaderBytes: 1048576
+
+gin:
+  name: email_server_job
+  debug: false
+  timeout: 5s
+
+db:
+  name: email_server_job
+  type: mysql
+  host: 192.168.56.110
+  port: 3306
+  database: common_service
+  user: yth_blog
+  password: http://hlzblog.top
+  maxIdleConns: 50
+  maxOpenConns: 30
+  maxLeftTime: 30s
+
+redis:
+  name: email_server_job
+  proto: tcp
+  addr: 192.168.56.110:6379
+  auth: zhangli
+  dialTimeout: 100ms
+  readTimeout: 200ms
+  writeTimeout: 200ms
+  expire: 10s
+  pool:
+    maxActive: 50
+    maxIdle: 10
+    idleTimeout: 80s
+
+log:
+  name: email_server_job
+  stdout: false # true 直接输出到命令行 false 不输出信息到命令行
+  dir: "/tmp/email_server/working.log" # 设定日志的存放位置，如果为空字符串，则表示不存储。注：不存储时 stdout 参数才会生效
+
+email:
+  driver: "amqp" # 队列驱动枚举 amqp 、kafka
+  consumer: 3 # 并发消费数量
+  batchNumber: 3 # 每次拉取的消息量
+  uploadFile:
+    dir: "/tmp/email_server/upload" # 上传附件的暂存目录
+  smtp:
+    host: "smtp.qq.com"
+    port: 587
+    tls: true
+    fromAddr: "hlzblog@vip.qq.com" # QQ邮箱------需要改--------------
+    user: "" # QQ号-----------------------------需要改---------------
+    password: "" # POP3密码----------------------需要改---------------
+
+rabbitMq:
+  name: "email_server_job_local"
+  host: "192.168.56.110"
+  port: 5672
+  username: "guest"
+  password: "guest"
+
+kafka: # API 与 JOB 用同一套配置即可
+  admin: #集群设置
+    timeout: 3s #client端等待集群的超时时间 3秒
+  net: #网络设置
+    max_open_requests: 5 #最大同时连接数
+    dial_timeout: 30s #初始化连接的超时时间
+    read_timeout: 30s #等待响应的超时时间
+    write_timeout: 30s #传输的超时时间
+    SASL: #连接安全设置
+      enable: false #是否启用认证
+      hand_shake: true #是否需要在第一次连接的时候进行握手
+      version: 1 #当kafka版本大于1.0时候设置为1 除非使用的是 Azure EventHub
+    TLS: #TLS设置
+      enable: false #是否启用
+    keep_alive: 0 #保持长连的时间 0代表不保持长连
+  metadata: #对producer和consumer设置的元数据
+    retry: #重试
+      max: 3 #发送元数据请求的最大数量
+      back_off: 250ms #在重试前等待leader选举的最多等待时间
+    refresh_frequency: 10s #刷新元数据的频率
+    full: true #是否维护所有topic的原数据
+    timeout: 10s #等待元数据相应的最大等待时间
+  producer: #生产配置
+    max_message_bytes: 1000000 #消息可以发送的最大字节数
+    required_acks: 1 # 生产可靠性配置 枚举值 1: leader节点获取成功  0:kafka只管发送无法确认成功 -1:leader和follower都获取成功
+    timeout: 10s # 在数据发送出去后 broker等待的最大时间 只有 required_acks设置为小于1有用
+    compression_level: -1000 #对消息压缩等级的选择 -1000表示不采用压缩
+    idempotent: false #是否让producer保证消息的所有copy保证被写入
+    return: #是否接受相应返回的消息
+      errors: true #是否让失败的消息发送 errors channel 中
+      successes: true #是否让失败的消息发送 successes channel 中 如果使用syncProducer 那么必须为true
+    retry: # 重试设置
+      max: 3 # 重新发送消息的次数
+      backoff: 100ms # 在发送重试之前等待集群的最大时间
+  consumer: #消费设置
+    max_wait_time: 250ms #broker 等待 consumer的最大时间 默认毫秒为单位
+    max_processing_time: 100ms #默认毫秒为单位 consumer所期望的消息处理最大时间 如果超过 那么 partition将会停止拉取消息直到partition可以重新获取
+    fetch: #设置对于请求可以拉取的字节数
+      min: 1 #单次请求的最小字节数
+      max: 0 #单次请求的最大字节数 0代表无限制
+      default: 1048576 # 单次请求的默认字节数 1024*1024
+    retry: #重试设置
+      back_off: 2s #从partition获取消息时候后等待的时间
+    return: #返回设置
+      errors: true #是否将失败的消息发送到 errors channel
+    offsets: #对于 consumer offset设置
+      commit_interval: 1s # commit_id 更新的频率
+      initial: -1 #初始化的offset位置枚举值 -1 初始化时 partition 对应的最新一条消息offset位置
+      retention: 0 #对于 committed offsets 的保留时间 0代表不使用
+      retry: # 重试次数
+        max: 3 #在OffsetManager关闭时候，commit失败重试的次数
+    group: #消费组设置
+      session: #对于消费节点设置
+        timeout: 10s #如果在broker收不到该consumer的heartbeats后，超时指定时间后这个consumer将会被下线
+      heart_beat: # 心跳设置
+        interval: 3s #频率设置 默认为秒
+      rebalance: #重新分配设置
+        timeout: 60s # 重新分配的超时时间，超过则会被移除
+        retry: # 重新分配的尝试次数
+          max: 3 # 最大次数
+          back_off: 2s # 在重新分配之前的等待时间
+  client_id: email_server_job_local #client_id 根据自己应用进行设置
+  channel_buffer_size: 1024 # 所有的channel的长度
+  version: 12 #版本设置 建议选择低于现在的版本
+  brokers_addr: [192.168.56.110:9092] #brokers 地址
+
+kafkaTopic:
+  group: "email_consumer" # 邮件服务-消费者组名称
+  topicList: # 邮件服务-Topic列表
+    - "biz_email" # 自己用于存储邮件消息的 kafka
