@@ -3,7 +3,7 @@ module github.com/HaleyLeoZhang/email_server
 go 1.13
 
 require (
-	github.com/HaleyLeoZhang/go-component v1.7.0
+	github.com/HaleyLeoZhang/go-component v1.8.0
 	github.com/Shopify/sarama v1.28.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/google/uuid v1.1.2
